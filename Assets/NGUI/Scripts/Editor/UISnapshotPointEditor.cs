@@ -90,7 +90,7 @@ public class UISnapshotPointEditor : Editor
 #else
 		var go = PrefabUtility.FindPrefabRoot(t == null ? point.gameObject : t.gameObject);
 		if (go == null) return null;
-		return PrefabUtility.GetPrefabParent(go) as GameObject;
+		return PrefabUtility.GetCorrespondingObjectFromSource(go) as GameObject;
 #endif
 	}
 }

@@ -449,7 +449,7 @@ static public class NGUIEditorTools
 #else
 		go = PrefabUtility.FindPrefabRoot(go);
 		if (go == null) return null;
-		return PrefabUtility.GetPrefabParent(go) as GameObject;
+		return PrefabUtility.GetCorrespondingObjectFromSource(go) as GameObject;
 #endif
 	}
 
