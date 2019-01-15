@@ -20,7 +20,7 @@ public class Block : MonoBehaviour {
             print(GameObject.FindGameObjectsWithTag("Block").Length);
             if(GameObject.FindGameObjectsWithTag("Block").Length <= 1)
             {
-                print("passed");
+                GameManager.instance.FinishLevel();
             }
         }
     }

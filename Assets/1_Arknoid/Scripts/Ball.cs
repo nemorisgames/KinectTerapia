@@ -6,9 +6,13 @@ public class Ball : MonoBehaviour {
     public float speed = 10f;
     public Vector3 direction;
     Rigidbody rigidbody;
+    Vector3 initialDirection;
+    Vector3 initialPosition;
 	// Use this for initialization
 	void Start () {
         direction = direction.normalized;
+        initialDirection = direction;
+        initialPosition = transform.position;
         rigidbody = GetComponent<Rigidbody>();
     }
 
@@ -52,9 +56,19 @@ public class Ball : MonoBehaviour {
             }
         }
     }
+
+    public void ResetBall()
+    {
+        transform.position = initialPosition;
+        direction = initialDirection;
+    }
     // Update is called once per frame
     void LateUpdate () {
         //transform.position = transform.position + direction * speed * Time.deltaTime;
         rigidbody.velocity = direction * speed * Time.deltaTime;
+        if(transform.position.y < -2.5f)
+        {
+            GameManager.instance.LevelFailed();
+        }
     }
 }

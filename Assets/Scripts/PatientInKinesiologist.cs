@@ -20,7 +20,7 @@ public class PatientInKinesiologist : MonoBehaviour {
     public void ButtonPlay()
     {
         PlayerPrefs.SetInt("pk_patient", pk_patient);
-        SceneManager.LoadScene("GameGrid");
+        SceneManager.LoadScene("Configuration");
 
     }
 
