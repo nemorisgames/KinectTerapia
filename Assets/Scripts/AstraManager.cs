@@ -30,6 +30,12 @@ public class AstraManager : MonoBehaviour {
             }
         }
 
+        SetHand();
+        resetObjectToMove();
+    }
+
+    public void SetHand()
+    {
         if (PlayerPrefs.GetInt("handSelected", 1) == 1)
         {
             typeJoint = new nuitrack.JointType[1];
@@ -37,7 +43,7 @@ public class AstraManager : MonoBehaviour {
         }
         else
         {
-            if (PlayerPrefs.GetInt("handSelected", 1) == 1)
+            if (PlayerPrefs.GetInt("handSelected", 1) == -1)
             {
                 typeJoint = new nuitrack.JointType[1];
                 typeJoint[0] = nuitrack.JointType.LeftHand;
@@ -49,12 +55,14 @@ public class AstraManager : MonoBehaviour {
                 typeJoint[1] = nuitrack.JointType.RightHand;
             }
         }
+    }
 
+    public void resetObjectToMove()
+    {
         CreatedJoint = new GameObject[typeJoint.Length];
         for (int q = 0; q < typeJoint.Length; q++)
         {
-            CreatedJoint[q] = objectToMove;// Instantiate(PrefabJoint);
-            //CreatedJoint[q].transform.SetParent(objectToMove.transform);
+            CreatedJoint[q] = objectToMove;
         }
     }
 
