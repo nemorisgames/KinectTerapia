@@ -15,7 +15,8 @@ public class Block : MonoBehaviour {
     public void BlockHit()
     {
         life--;
-        if(life <= 0)
+        GameManager.instance.AddToScore(points);
+        if (life <= 0)
         {
             Destroy(gameObject);
             print(GameObject.FindGameObjectsWithTag("Block").Length);
@@ -28,7 +29,6 @@ public class Block : MonoBehaviour {
         {
             GetComponent<Renderer>().material.SetColor("_EmissionColor", colorLevels[life - 1]);
         }
-        GameManager.instance.AddToScore(points);
     }
 
     // Update is called once per frame

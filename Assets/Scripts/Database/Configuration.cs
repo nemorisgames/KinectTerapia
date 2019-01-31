@@ -9,14 +9,17 @@ public class Configuration : MonoBehaviour {
     public GameObject[] horizontalLimits;
     public GameObject horizontalIndicator;
     public GameObject horizontalPanel;
+    public GameObject horizontalGrid;
 
     public GameObject[] verticalLimits;
     public GameObject verticalIndicator;
     public GameObject verticalPanel;
+    public GameObject verticalGrid;
 
     public GameObject[] depthLimits;
     public GameObject depthIndicator;
     public GameObject depthPanel;
+    public GameObject depthGrid;
     // Use this for initialization
     void Start () {
         ShowHorIndicators(false);
@@ -32,6 +35,7 @@ public class Configuration : MonoBehaviour {
         }
         horizontalIndicator.SetActive(show);
         horizontalPanel.SetActive(show);
+        horizontalGrid.SetActive(show);
     }
     public void ShowVerIndicators(bool show)
     {
@@ -41,6 +45,7 @@ public class Configuration : MonoBehaviour {
         }
         verticalIndicator.SetActive(show);
         verticalPanel.SetActive(show);
+        verticalGrid.SetActive(show);
     }
     public void ShowDepthIndicators(bool show)
     {
@@ -50,6 +55,7 @@ public class Configuration : MonoBehaviour {
         }
         depthIndicator.SetActive(show);
         depthPanel.SetActive(show);
+        depthGrid.SetActive(show);
     }
 
     public void resetPositionHor()
