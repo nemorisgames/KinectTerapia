@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour {
 
     public void PlayAgain()
     {
-        SceneManager.LoadScene("Game1");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void Exit()

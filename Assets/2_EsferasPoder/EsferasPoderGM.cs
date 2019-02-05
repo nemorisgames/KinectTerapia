@@ -34,10 +34,12 @@ public class EsferasPoderGM : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Init () {
+	public void Init () {
+		generador.DestroyChildren();
 		generadorColor = new List<MeshRenderer>();
 		esferas = new List<GameObject>();
 		spheresCaught = 0;
+		sphereCount = 20;
 		gameOver = false;
 		random = new System.Random();
 		switch(dificultad){
@@ -66,9 +68,29 @@ public class EsferasPoderGM : MonoBehaviour {
 		esferas.Add(go);
 		yield return new WaitForSeconds(sphereTime);
 		sphereCount--;
-		if(sphereCount > 0){
+		if(sphereCount > 0 && spheresCaught + sphereCount > sphereTarget){
 			next = nextSphere();
 			StartCoroutine(next);
+		}
+		else{
+			if(next != null)
+				StopCoroutine(next);
+			gameOver = true;
+			//lose game
+			GameManager.instance.LevelFailed();
+		}
+	}
+
+	int Score(){
+		switch(dificultad){
+			case Dificultad.Nivel.facil:
+			return 200;
+			case Dificultad.Nivel.medio:
+			return 500;
+			case Dificultad.Nivel.dificil:
+			return 800;
+			default:
+			return 200;
 		}
 	}
 
@@ -79,13 +101,21 @@ public class EsferasPoderGM : MonoBehaviour {
 		go.transform.localPosition = new Vector3(0,spheresCaught,0);
 		generadorColor.Add(go.GetComponent<MeshRenderer>());
 		spheresCaught++;
+		GameManager.instance.AddToScore(Score());
 		SetColor(spheresCaught);
 		if(spheresCaught >= sphereTarget){
 			foreach(GameObject g in esferas)
 				Destroy(g);
-			Debug.Log("end game");
+			//Debug.Log("end game");
 			StopCoroutine(next);
 			gameOver = true;
+			//win game
+			if(dificultad == Dificultad.Nivel.facil)
+				dificultad = Dificultad.Nivel.medio;
+			else if(dificultad == Dificultad.Nivel.medio)
+				dificultad = Dificultad.Nivel.dificil;
+
+			GameManager.instance.FinishLevel();
 		}
 	}
 
