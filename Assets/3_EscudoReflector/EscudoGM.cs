@@ -15,10 +15,18 @@ public class EscudoGM : MonoBehaviour {
 	public bool CPUCatchAll = false;
 	public float CPUBaseSpeed = 10f;
 	public float CPUBallSpeedMult = 1f;
+	public Dificultad.Nivel dificultad;
+	public int bounceTarget;
+	public int bounces;
+	public int currentScore;
+	public GameObject [] cpuStation;
 
 	// Use this for initialization
 	void Awake () {
 		rand = new System.Random();
+		cpuNave.SetGM(this);
+		player.width = limit + 1;
+		player.moveSpeed = playerSpeed;
 		Init();
 	}
 	
@@ -27,14 +35,49 @@ public class EscudoGM : MonoBehaviour {
 		
 	}
 
-	void Init(){
-		cpuNave.SetGM(this);
-		player.width = limit + 1;
-		player.moveSpeed = playerSpeed;
+	public void SetCPUStation(){
+		switch(dificultad){
+			case Dificultad.Nivel.facil:
+				cpuStation[0].SetActive(true);
+				cpuStation[1].SetActive(false);
+				cpuStation[2].SetActive(false);
+			break;
+			case Dificultad.Nivel.medio:
+				cpuStation[0].SetActive(false);
+				cpuStation[1].SetActive(true);
+				cpuStation[2].SetActive(false);
+			break;
+			case Dificultad.Nivel.dificil:
+				cpuStation[0].SetActive(false);
+				cpuStation[1].SetActive(false);
+				cpuStation[2].SetActive(true);
+			break;
+		}
+	}
+
+	public void Init(){
+		switch(dificultad){
+			case Dificultad.Nivel.facil:
+				bounceTarget = 5;
+				currentScore = 200;
+				ballBaseSpeed = 200;
+			break;
+			case Dificultad.Nivel.medio:
+				bounceTarget = 7;
+				currentScore = 500;
+				ballBaseSpeed = 250;
+			break;
+			case Dificultad.Nivel.dificil:
+				bounceTarget = 10;
+				currentScore = 800;
+				ballBaseSpeed = 300;
+			break;
+		}
 		InitBall();
 	}
 
-	public void InitBall(){
+	public void InitBall(int bounces = 0){
+		this.bounces = bounces;
 		Vector3 pos = cpuNave.transform.position;
 		pos.y -= 0.7f;
 		currentBall = (GameObject)Instantiate(ball,pos,Quaternion.identity);
@@ -45,17 +88,17 @@ public class EscudoGM : MonoBehaviour {
 	}
 
 	public void SetCPUTarget(bool b){
-		if(b){
+		//if(b){
 			cpuNave.speed = 10;
 			cpuNave.target = currentBall.transform;
-		}
+		/* }
 		else{
 			cpuNave.speed = 7;
 			if(CPUCatchAll)
 				cpuNave.target = currentBall.transform;
 			else
 				cpuNave.target = null;
-		}
+		}*/
 		StartCoroutine(cpuNave.startChase());
 	}
 }

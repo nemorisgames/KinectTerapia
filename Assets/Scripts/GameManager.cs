@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
     public TweenAlpha nextLevelScreen;
     public TweenAlpha youWinScreen;
     public TweenAlpha youLoseScreen;
+    public UILabel loseScore;
 
     // Use this for initialization
     void Start () {
@@ -31,11 +32,18 @@ public class GameManager : MonoBehaviour {
             }
         }
         Time.timeScale = 0f;
+        if(loseScore == null)
+            loseScore = youLoseScreen.transform.Find("Subtitle").GetComponent<UILabel>();
     }
 
     public void AddToScore(int points)
     {
         currentScore += points;
+        scoreLabel.text = "" + currentScore;
+    }
+
+    public void SubstractFromScore(int points){
+        currentScore -= points;
         scoreLabel.text = "" + currentScore;
     }
 
@@ -69,6 +77,9 @@ public class GameManager : MonoBehaviour {
 
     public void LevelFailed(){
         youLoseScreen.PlayForward();
+        if(loseScore != null)
+            loseScore.text = "Puntaje: \n" + currentScore;
+             
     }
 
     public void PlayAgain()

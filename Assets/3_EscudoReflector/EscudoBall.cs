@@ -15,6 +15,7 @@ public class EscudoBall : MonoBehaviour {
 	[HideInInspector]
 	public float fixAngle = 0.1f;
 	private EscudoGM gm;
+	private int score;
 	System.Random random;
 
 	// Use this for initialization
@@ -29,6 +30,7 @@ public class EscudoBall : MonoBehaviour {
 
 	void Update(){
 		if(transform.position.x > limit || transform.position.x < -limit){
+			GameManager.instance.SubstractFromScore(gm.bounces * score);
 			gm.InitBall();
 			Destroy(this.gameObject);
 		}
@@ -38,10 +40,12 @@ public class EscudoBall : MonoBehaviour {
 		this.gm = gm;
 		this.limit = (gm.limit + 3);
 		this.baseSpeed = gm.ballBaseSpeed;
+		this.score = gm.currentScore;
 	}
 
 	void Init(){
 		rb.AddForce(new Vector3(0,-baseSpeed,0));
+		gm.SetCPUTarget(true);
 	}
 
 	void UpdateSpeed(int dir){
@@ -52,7 +56,7 @@ public class EscudoBall : MonoBehaviour {
 			speed *= gm.CPUBallSpeedMult;
 		rb.velocity = Vector3.zero;
 		rb.AddForce(angle*baseSpeed,dir*speed,0);
-		gm.SetCPUTarget(dir > 0 ? true : false);
+		//gm.SetCPUTarget(dir > 0 ? true : false);
 	}
 
 	void OnCollisionEnter(Collision col){
@@ -80,51 +84,51 @@ public class EscudoBall : MonoBehaviour {
 				UpdateSpeed(1);
 				break;
 			case "CPU":
-				float cpuPos = gm.cpuNave.transform.position.x;
-				float playerPos = gm.player.transform.position.x;
-				float target = 0;
-
-				if(cpuPos <= 3f && cpuPos >= -3f && playerPos <= 3f && playerPos >= -3f){
-					r = random.Next(0,99);
-					if(r < 45){
-						r = random.Next(0,1);
-						if(r == 0)
-							target = random.Next(9,11);
-						else
-							target = -(random.Next(9,11));
+				//puntaje
+				GameManager.instance.AddToScore(score);
+				//num rebotes
+				gm.bounces++;
+				if(gm.bounces >= gm.bounceTarget){
+					switch(gm.dificultad){
+						case Dificultad.Nivel.facil:
+							gm.dificultad = Dificultad.Nivel.medio;
+						break;
+						case Dificultad.Nivel.medio:
+							gm.dificultad = Dificultad.Nivel.dificil;
+						break;
+						default:
+						break;
 					}
-					else{
-						target = -playerPos * (random.Next(0,10)/2);
-					}
-
-				}
-				//si cpu esta cerca de una esquina
-				else if(cpuPos > 6 || cpuPos < -6){
-					//esquinas
-					float sign = 1;
-					if(cpuPos > 6)
-						sign = -1;
-					if((cpuPos > 6 && playerPos >= 6f) || (cpuPos < -6 && playerPos <= -6f)){
-						r = random.Next(0,99);
-						if(r < 35)
-							target = sign * random.Next(0,3);
-						else
-							target = sign * random.Next(13,18);
-					}
-					else{
-						r = random.Next(0,99);
-						if(r < 50)
-							target = Mathf.Abs(cpuPos) * sign;
-						else
-							target = random.Next(5,15) * sign;
-					}
+					gm.SetCPUStation();
+					GameManager.instance.FinishLevel();
+					Destroy(this.gameObject);
 				}
 				else{
-					target = random.Next(-7,7);
+					float cpuPos = gm.cpuNave.transform.position.x;
+					float playerPos = gm.player.transform.position.x;
+					float target = 0;
+
+					float rangeLeft = -(limit-1) - playerPos;
+					float rangeRight = (limit-1) - playerPos;
+
+					float probLeft = Mathf.Abs((rangeLeft * 100)/(2*limit));
+					r = random.Next(0,99);
+					//Debug.Log(probLeft +" < "+r);
+					if(r <= probLeft){
+						int aux = Mathf.CeilToInt(playerPos) + Mathf.FloorToInt(rangeLeft/2f);
+						r =random.Next(-(limit-1),aux);
+						target = r - cpuPos;
+					}
+					else{
+						int aux = Mathf.FloorToInt(playerPos) + Mathf.CeilToInt(rangeRight/2f);
+						r =random.Next(aux,(limit-1));
+						target = r - cpuPos;
+					}
+					
+					//Debug.Log(target);
+					angle = target * fixAngle;
+					UpdateSpeed(-1);
 				}
-				Debug.Log(target);
-				angle = target * fixAngle;
-				UpdateSpeed(-1);
 			break;
 			case "Block":
 			Destroy(c.gameObject);
@@ -133,11 +137,12 @@ public class EscudoBall : MonoBehaviour {
 			angle *= -1;
 			break;
 			case "StationPlayer":
-			gm.InitBall();
+			//gm.InitBall();
+			GameManager.instance.LevelFailed();
 			Destroy(this.gameObject);
 			break;
 			case "StationCPU:":
-			Destroy(this.gameObject);
+			UpdateSpeed(-1);
 			break;
 		}
 	}

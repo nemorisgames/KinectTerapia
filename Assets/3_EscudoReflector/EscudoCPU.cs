@@ -12,7 +12,7 @@ public class EscudoCPU : MonoBehaviour {
 	[HideInInspector]
 	public float ballAngle = 1;
 	public float chaseDelay = 0.5f;
-	[HideInInspector]
+	//[HideInInspector]
 	public float currentSpeed = 0;
 	int limit;
 	int shortLimit;
@@ -26,23 +26,31 @@ public class EscudoCPU : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		Vector3 pos = transform.position;
 		if(gm.CPUCatchAll && target != null){
 			pos = transform.position;
 			float targetX = target.position.x;
 			if(ballAngle == 0)
 				ballAngle = 1;
-			currentSpeed = Time.deltaTime * speed * Mathf.Abs(ballAngle);
+
+			/* currentSpeed = Time.deltaTime * speed * Mathf.Abs(ballAngle);
+
 			if(targetX < pos.x)
 				currentSpeed *= -1;
-			currentSpeed = Mathf.Clamp(currentSpeed,-limit,limit);
+
+			//currentSpeed = Mathf.Clamp(currentSpeed,-limit,limit);
+			rangoError = Mathf.Abs(currentSpeed);
 			if(currentSpeed > 0 && pos.x >= limit || currentSpeed < 0 && pos.x <= -limit)
 				currentSpeed = 0;
+
 			else if(pos.x <= target.position.x + rangoError && pos.x >= target.position.x - rangoError)
 				currentSpeed = 0;
+
 			else
-				transform.Translate(currentSpeed,0,0);
+				transform.Translate(currentSpeed,0,0);*/
+			targetX = Mathf.Clamp(targetX,-limit,limit);
+			transform.position = new Vector3(targetX,pos.y,pos.z);
 		}
 		else{
 			if(target != null && chase){
