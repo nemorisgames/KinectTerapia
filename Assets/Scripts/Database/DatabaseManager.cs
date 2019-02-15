@@ -219,32 +219,19 @@ public class DatabaseManager : MonoBehaviour {
 
     public List<TablePatientsResult> GetResultsOnPatient(int pk_patient)
     {
-        /*
-        var p = DBConnection.Table<TableSession>().Where(x => x.fk_patient == pk_patient);
-        if (p.Count() > 0)
-        {
-            TableSession[] tableResults = new TableSession[p.Count()];
-            for (int i = 0; i < p.Count(); i++)
-            {
-                tableResults[i] = p.ElementAt(i);
-            }
-            return tableResults;
-        }
-        return null;*/
         //List<TableSession> s = DatabaseManager.instance.DBConnection.Query<TableSession>("select \"g.name\" as \"pk_session\", \"MAX(s.score)\" as \"pk_game\" from TableSession s, TableGame g where s.fk_game = g.pk_game AND s.fk_patient = ? GROUP BY g.name", pk_patient);
-        List<TableSession> session = DatabaseManager.instance.DBConnection.Query<TableSession>("select \"pk_session\", \"fk_game\", \"MAX(score)\" as \"score\" from TableSession where fk_patient = ? GROUP BY fk_game", pk_patient);
-        List<TablePatientsResult> t = new List<TablePatientsResult>();
+        List<TableSession> session = DatabaseManager.instance.DBConnection.Query<TableSession>("select pk_session, fk_game, MAX(score) as score from TableSession where fk_patient = ? GROUP BY fk_game", pk_patient);
+        List<TablePatientsResult> tableResult = new List<TablePatientsResult>();
         foreach(TableSession ts in session)
         {
-            List<TableGame> game = DatabaseManager.instance.DBConnection.Query<TableGame>("select \"name\" from TableSession where fk_patient = ?", pk_patient);
-
-            /*
-            TablePatientsResult tr = new TablePatientsResult();
-            tr.game = ts.pk_session;
-            tr.score = ts.fk_game;
-            t.Add(tr);*/
+            List<TableGame> game = DatabaseManager.instance.DBConnection.Query<TableGame>("select name from TableGame where pk_game = ?", ts.fk_game);
+            TablePatientsResult tpr = new TablePatientsResult();
+            tpr.game = game[0].name;
+            tpr.score = ts.score;
+            tableResult.Add(tpr);
+            //print(tpr.game + " " + tpr.score);
         }
-        return t;
+        return tableResult;
     }
 
     // Update is called once per frame
@@ -256,6 +243,6 @@ public class DatabaseManager : MonoBehaviour {
 //Aux table to store the results for a patient
 public class TablePatientsResult
 {
-    public int game { get; set; }
+    public string game { get; set; }
     public int score { get; set; }
 }

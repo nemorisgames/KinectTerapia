@@ -25,7 +25,7 @@ public class PatientsList : MonoBehaviour {
             cont++;
         }
     }
-
+    
     public void CheckResults(int pk_patient)
     {
         scrollPatientsPanel.gameObject.SetActive(false);
@@ -37,14 +37,14 @@ public class PatientsList : MonoBehaviour {
         int cont = 0;
         foreach (TablePatientsResult t in tableResults)
         {
-            /*GameObject g = (GameObject)Instantiate(patientResult);
+            GameObject g = (GameObject)Instantiate(patientResult);
             g.transform.parent = scrollResultsPanel;
             g.transform.localPosition = new Vector3(0f, cont * -50f, 0f);
             g.transform.localScale = Vector3.one;
-            PatientResults p = g.GetComponent<PatientResults>();*/
-            //p.SetInformation(t.pk_session, );
-            print("session " + t.game);
-            print("game " + t.score);
+            PatientResults p = g.GetComponent<PatientResults>();
+            p.SetInformation(t.pk_session, );
+            print("game " + t.game);
+            print("score " + t.score);
             //patientsInKinesiologist.Add(p);
             cont++;
         }

@@ -12,10 +12,11 @@ public class PatientResults : MonoBehaviour {
 		
 	}
 
-    public void SetInformation(int pk_game, string name)
+    public void SetInformation(int pk_game, string name, int record)
     {
         nameGameLabel.text = name;
         this.pk_game = pk_game;
+        this.recordLabel.text = "" + record;
     }
 
     public void ButtonPlay()
