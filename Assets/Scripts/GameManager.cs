@@ -47,6 +47,11 @@ public class GameManager : MonoBehaviour {
         scoreLabel.text = "" + currentScore;
     }
 
+    public void SetScore(int points){
+        currentScore = points;
+        scoreLabel.text = "" + currentScore;
+    }
+
     public void ButtonPlay()
     {
         Time.timeScale = 1f;
