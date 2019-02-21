@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 //A complete example of how to work with SQLLite is in the project SQLite4Unity3d-master
 //Source: https://github.com/robertohuertasm/SQLite4Unity3d
+//Examples: https://github.com/praeclarum/sqlite-net
 public class DatabaseManager : MonoBehaviour {
     public static DatabaseManager instance = null;
     private SQLiteConnection DBConnection;
@@ -29,7 +30,7 @@ public class DatabaseManager : MonoBehaviour {
         if (testForceDBCreation)
             CreateDB("JuegosKinect.db");
         else
-            DataService("JuegosKinect.db"); 
+            DataService("JuegosKinect.db");
     }
 
     public void DataService(string DatabaseName)
@@ -169,6 +170,17 @@ public class DatabaseManager : MonoBehaviour {
                 speedMin = 10f,
                 speedMax = 20f,
                 heatMap = "image.png"
+            },
+            new TableSession{
+                pk_session = 2,
+                fk_configuration = 1,
+                fk_game = 1,
+                fk_patient = 1,
+                score = 2000,
+                dateSession = "2018-12-24 10:00:00",
+                speedMin = 10f,
+                speedMax = 20f,
+                heatMap = "image.png"
             }
         });
 
@@ -205,8 +217,32 @@ public class DatabaseManager : MonoBehaviour {
         return null;
     }
 
+    public List<TablePatientsResult> GetResultsOnPatient(int pk_patient)
+    {
+        //List<TableSession> s = DatabaseManager.instance.DBConnection.Query<TableSession>("select \"g.name\" as \"pk_session\", \"MAX(s.score)\" as \"pk_game\" from TableSession s, TableGame g where s.fk_game = g.pk_game AND s.fk_patient = ? GROUP BY g.name", pk_patient);
+        List<TableSession> session = DatabaseManager.instance.DBConnection.Query<TableSession>("select pk_session, fk_game, MAX(score) as score from TableSession where fk_patient = ? GROUP BY fk_game", pk_patient);
+        List<TablePatientsResult> tableResult = new List<TablePatientsResult>();
+        foreach(TableSession ts in session)
+        {
+            List<TableGame> game = DatabaseManager.instance.DBConnection.Query<TableGame>("select name from TableGame where pk_game = ?", ts.fk_game);
+            TablePatientsResult tpr = new TablePatientsResult();
+            tpr.game = game[0].name;
+            tpr.score = ts.score;
+            tableResult.Add(tpr);
+            //print(tpr.game + " " + tpr.score);
+        }
+        return tableResult;
+    }
+
     // Update is called once per frame
     void Update () {
 		
 	}
+}
+
+//Aux table to store the results for a patient
+public class TablePatientsResult
+{
+    public string game { get; set; }
+    public int score { get; set; }
 }
