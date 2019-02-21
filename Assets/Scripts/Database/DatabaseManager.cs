@@ -226,12 +226,33 @@ public class DatabaseManager : MonoBehaviour {
         {
             List<TableGame> game = DatabaseManager.instance.DBConnection.Query<TableGame>("select name from TableGame where pk_game = ?", ts.fk_game);
             TablePatientsResult tpr = new TablePatientsResult();
+            tpr.pk_game = ts.fk_game;
             tpr.game = game[0].name;
             tpr.score = ts.score;
             tableResult.Add(tpr);
             //print(tpr.game + " " + tpr.score);
         }
         return tableResult;
+    }
+
+    public List<TablePatientsDetails> GetDetailsOnPatient(int pk_patient, int pk_game)
+    {
+        //List<TableSession> s = DatabaseManager.instance.DBConnection.Query<TableSession>("select \"g.name\" as \"pk_session\", \"MAX(s.score)\" as \"pk_game\" from TableSession s, TableGame g where s.fk_game = g.pk_game AND s.fk_patient = ? GROUP BY g.name", pk_patient);
+        List<TableSession> session = DatabaseManager.instance.DBConnection.Query<TableSession>("select pk_session,fk_configuration, dateSession, score ,speedMin, speedMax, heatmap from TableSession where fk_patient = ? AND fk_game = ? ORDER BY dateSession desc", pk_patient, pk_game);
+        List<TablePatientsDetails> tableDetails = new List<TablePatientsDetails>();
+        foreach (TableSession ts in session)
+        {
+            List<TableConfiguration> config = DatabaseManager.instance.DBConnection.Query<TableConfiguration>("select hand from TableConfiguration where pk_configuration = ?", ts.fk_configuration);
+            TablePatientsDetails tpr = new TablePatientsDetails();
+            tpr.pk_session = ts.pk_session;
+            tpr.dateSession = ts.dateSession;
+            tpr.hand = config[0].hand;
+            tpr.score = ts.score;
+            tpr.speedMin = ts.speedMax;
+            tpr.heatmap = ts.heatMap;
+            tableDetails.Add(tpr);
+        }
+        return tableDetails;
     }
 
     // Update is called once per frame
@@ -243,6 +264,19 @@ public class DatabaseManager : MonoBehaviour {
 //Aux table to store the results for a patient
 public class TablePatientsResult
 {
+    public int pk_game { get; set; }
     public string game { get; set; }
     public int score { get; set; }
+}
+
+//Aux table to store the details for a patient
+public class TablePatientsDetails
+{
+    public int pk_session { get; set; }
+    public string dateSession { get; set; }
+    public int hand { get; set; }
+    public int score { get; set; }
+    public float speedMin { get; set; }
+    public float speedMax { get; set; }
+    public string heatmap { get; set; }
 }

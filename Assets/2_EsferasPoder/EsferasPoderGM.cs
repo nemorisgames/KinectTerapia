@@ -18,6 +18,7 @@ public class EsferasPoderGM : MonoBehaviour {
 	System.Random random;
 	bool gameOver = false;
 	IEnumerator next;
+    public GameObject[] containers;
 
 	void Awake(){
 		player = GameObject.FindObjectOfType<EsferasPoderPlayer>().GetComponent<EsferasPoderPlayer>();
@@ -46,17 +47,26 @@ public class EsferasPoderGM : MonoBehaviour {
 			case Dificultad.Nivel.facil:
 				sphereTarget = 5;
 				sphereTime = 2;
-			break;
+                containers[0].SetActive(true);
+                containers[1].SetActive(false);
+                containers[2].SetActive(false);
+                break;
 			case Dificultad.Nivel.medio:
 				sphereTarget = 10;
 				sphereTime = 1.5f;
-			break;
+                containers[0].SetActive(false);
+                containers[1].SetActive(true);
+                containers[2].SetActive(false);
+                break;
 			case Dificultad.Nivel.dificil:
 				sphereTarget = 15;
 				sphereTime = 1;
-			break;
+                containers[0].SetActive(false);
+                containers[1].SetActive(false);
+                containers[2].SetActive(true);
+                break;
 		}
-		next = nextSphere();
+        next = nextSphere();
 		StartCoroutine(next);
 	}
 
@@ -121,19 +131,26 @@ public class EsferasPoderGM : MonoBehaviour {
 
 	void SetColor(float current){
 		if(current < (sphereTarget/2f)){
-			foreach(MeshRenderer mr in generadorColor)
-				//if(mr.material.color != Color.red)
-					mr.material.color = Color.red;
+            foreach (MeshRenderer mr in generadorColor)
+            {
+                //if(mr.material.color != Color.red)
+                mr.material.color = Color.red;
+                mr.material.SetColor("_EmissionColor", Color.red);
+            }
 		}
 		else if(current >= (sphereTarget/2f) && current < sphereTarget){
-			foreach(MeshRenderer mr in generadorColor)
+			foreach(MeshRenderer mr in generadorColor) { 
 				//if(mr.material.color != Color.yellow)
-					mr.material.color = Color.yellow;
-		}
+				mr.material.color = Color.yellow;
+                mr.material.SetColor("_EmissionColor", Color.yellow);
+            }
+        }
 		else if(current >= sphereTarget){
-			foreach(MeshRenderer mr in generadorColor)
+			foreach(MeshRenderer mr in generadorColor) { 
 				//if(mr.material.color != Color.green)
-					mr.material.color = Color.green;
-		}
+				mr.material.color = Color.green;
+                mr.material.SetColor("_EmissionColor", Color.green);
+            }
+        }
 	}
 }

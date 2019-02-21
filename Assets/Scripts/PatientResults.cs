@@ -7,8 +7,9 @@ public class PatientResults : MonoBehaviour {
     public UILabel nameGameLabel;
     public UILabel recordLabel;
     int pk_game;
-	// Use this for initialization
-	void Start () {
+    PatientsList patientsList;
+    // Use this for initialization
+    void Start () {
 		
 	}
 
@@ -17,16 +18,13 @@ public class PatientResults : MonoBehaviour {
         nameGameLabel.text = name;
         this.pk_game = pk_game;
         this.recordLabel.text = "" + record;
-    }
-
-    public void ButtonPlay()
-    {
-        PlayerPrefs.SetInt("pk_game", pk_game);
+        patientsList = transform.root.GetComponent<PatientsList>();
     }
 
     public void ButtonDetails()
     {
-
+        PlayerPrefs.SetInt("pk_game", pk_game);
+        patientsList.CheckDetails(PlayerPrefs.GetInt("pk_patient"), pk_game);
     }
 	
 	// Update is called once per frame

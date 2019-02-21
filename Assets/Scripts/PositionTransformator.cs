@@ -17,6 +17,13 @@ public class PositionTransformator : MonoBehaviour {
     public float depthDifferenceConfig;
     // Use this for initialization
     void Start () {
+        PlayerPrefs.SetFloat("limitHorMax", 10);
+        PlayerPrefs.SetFloat("limitHorMin", -10);
+        PlayerPrefs.SetFloat("limitVerMax", 10);
+        PlayerPrefs.SetFloat("limitVerMin", -10);
+        PlayerPrefs.SetFloat("limitDepthMax", 10);
+        PlayerPrefs.SetFloat("limitDepthMin", -10);
+
         horDifference = horLimits[1] - horLimits[0];
         verDifference = verLimits[1] - verLimits[0];
         depthDifference = depthLimits[1] - depthLimits[0];
