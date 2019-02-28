@@ -18,14 +18,25 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 	Rigidbody rb;
 	public bool launched = false;
 	public bool detenido = false;
+	public bool canLaunch = true;
 	private Vector3 handPos;
 	private int width = 8;
 	private int height = 6;
 	private float [] posiciones;
 	public List<TweenPosition> aliens = new List<TweenPosition>();
 	public bool [] aliensMoving = new bool[]{};
-	float blocked = 100;
+	private float blocked = 100;
 	private AtrapaAlien mano;
+	private int score;
+	private float stageTime;
+	private int atrapadosTarget;
+	public float time;
+	private float alienSpeed;
+	private float alienTime;
+	public UILabel timeLabel;
+	public UILabel atrapadosLabel;
+	public float savedTime;
+	IEnumerator trappedAlien;
 
 	// Use this for initialization
 	void Awake () {
@@ -42,23 +53,47 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 		RestartHand();
 	}
 
+	void SetAtrapados(int a){
+		atrapados = a;
+		atrapadosLabel.text = "Atrapados: " + atrapados;
+	}
+
 	void Init(){
-		atrapados = 0;
+		SetAtrapados(0);
+		time = 0;
 		switch(dificultad){
 			case Dificultad.Nivel.facil:
 				range = 3;
+				atrapadosTarget = 3;
 				posiciones = new float[]{-5,0,5};
+				score = 500;
+				stageTime = 5;
+				alienTime = 5;
+				alienSpeed = 3;
 			break;
 			case Dificultad.Nivel.medio:
 				range = 4;
+				atrapadosTarget = 5;
 				posiciones = new float[]{-6,-2,2,6};
+				score = 700;
+				stageTime = 4;
+				alienTime = 4f;
+				alienSpeed = 2.5f;
 			break;
 			case Dificultad.Nivel.dificil:
 				range = 5;
+				atrapadosTarget = 10;
 				posiciones = new float[]{-8,-4,0,4,8};
+				score = 800;
+				stageTime = 3;
+				alienTime = 3.5f;
+				alienSpeed = 2f;
 			break;
 		}
-		maxMoving = range - 2;
+		SetTimeLabel(stageTime*60);
+		maxMoving = range - 1;
+		foreach(TweenPosition t in aliens)
+			Destroy(t.gameObject);
 		aliens.Clear();
 		aliensMoving = new bool[posiciones.Length];
 		for(int i = 0; i < aliensMoving.Length; i++)
@@ -74,15 +109,27 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 	}
 
 	void RestartHand(){
+		if(trappedAlien != null)
+			StopCoroutine(trappedAlien);
 		launched = false;
 		detenido = false;
 		rb.useGravity = false;
 		rb.velocity = Vector3.zero;
 		hand.transform.position = handPos;
 		BlockPosition(false);
+		foreach(Transform t in hand.transform){
+			SetAtrapados(atrapados+1);
+			GameManager.instance.AddToScore(score);
+			Destroy(t.gameObject);
+		}
+		if(atrapados >= atrapadosTarget){
+			savedTime = Time.time;
+			GameManager.instance.FinishLevel();
+		}
 	}
+	
 
-	void NextLevel(){
+	public void NextLevel(){
 		switch(dificultad){
 			case Dificultad.Nivel.facil:
 				dificultad = Dificultad.Nivel.medio;
@@ -91,11 +138,12 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 				dificultad = Dificultad.Nivel.dificil;
 			break;
 		}
+		Init();
 	}
 
 	IEnumerator MoveAlien(int index, float time){
 		moving++;
-		Debug.Log("Moving: "+index);
+		//Debug.Log("Moving: "+index);
 		aliensMoving[index] = true;
 		yield return new WaitForSeconds(Random.Range(0,2));
 		aliens[index].PlayForward();
@@ -103,6 +151,12 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 		aliens[index].PlayReverse();
 		aliensMoving[index] = false;
 		moving--;
+	}
+
+	IEnumerator TrappedAlien(){
+		yield return new WaitForSeconds(alienSpeed);
+		foreach(Transform t in hand.transform)
+			Destroy(t.gameObject);
 	}
 	
 	// Update is called once per frame
@@ -114,8 +168,8 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 			int index = Random.Range(0,aliensMoving.Length);
 			while(aliensMoving[index] || aliens[index].transform.position.x == blocked)
 				index = Random.Range(0,aliensMoving.Length);
-			Debug.Log(index);
-			StartCoroutine(MoveAlien(index,5));
+			//Debug.Log(index);
+			StartCoroutine(MoveAlien(index,alienTime));
 		}
 		Vector3 handPosition = Input.mousePosition - new Vector3(Screen.width/2, Screen.height/2, 0f);
         Vector3 viewport = Camera.main.ScreenToViewportPoint(handPosition);
@@ -124,12 +178,15 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 		manoRef.transform.position = new Vector3(hPos,vPos,0);
 
 		if(!launched){
-			if(manoRef.transform.position.y > 2f){
+			if(!canLaunch && manoRef.transform.position.y < 0)
+				canLaunch = true;
+			if(manoRef.transform.position.y > 2f && canLaunch){
 				launched = true;
 				rb.velocity = Vector3.zero;
 				float launchX = LaunchX(range);
 				rb.AddForce(new Vector3(launchX,moveSpeed.y,moveSpeed.x)*launchForce,ForceMode.Impulse);
 				rb.useGravity = true;
+				canLaunch = false;
 			}
 		}
 		else{
@@ -144,6 +201,18 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 		}
 
 		lastPos = manoRef.transform.position;
+	}
+
+	void LateUpdate()
+	{
+		if(Time.timeScale == 0)
+			return;
+		time = stageTime*60 - (Time.time - savedTime);
+		SetTimeLabel(time);
+	}
+
+	void SetTimeLabel(float f){
+		timeLabel.text = Mathf.FloorToInt(f/60)+":"+(Mathf.FloorToInt(f%60) < 10 ? "0" : "")+(Mathf.FloorToInt(f%60));
 	}
 
 	float LaunchX(float range){
@@ -212,5 +281,21 @@ public class AtrapaMarcianosGM : MonoBehaviour {
 			blocked = mano.target;
 		else
 			blocked = 100;
+	}
+
+	public void Atrapado(float f){
+		int position = 0;
+		for(int i = 0; i < posiciones.Length; i++){
+			if(f == posiciones[i]){
+				position = i;
+				break;
+			}
+		}
+		GameObject g = (GameObject)Instantiate(alienPrefab,new Vector3(f,alienPrefab.transform.position.y,enemyPosZ),alienPrefab.transform.rotation);
+		aliens[position] = g.GetComponent<TweenPosition>();
+		aliens[position].to.x = f;
+		aliens[position].from.x = f;
+		trappedAlien = TrappedAlien();
+		StartCoroutine(trappedAlien);
 	}
 }
