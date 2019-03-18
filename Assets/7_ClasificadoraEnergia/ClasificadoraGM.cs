@@ -23,6 +23,7 @@ public class ClasificadoraGM : MonoBehaviour {
 	private List<EsferaClasificadora> currentBalls = new List<EsferaClasificadora>();
 	private IEnumerator nextBall;
 	private int fallos;
+	private int score;
 
 	void Awake () {
 		if(Instance == null)
@@ -41,16 +42,19 @@ public class ClasificadoraGM : MonoBehaviour {
 				target = 10;
 				total = 15;
 				ballTime = 2f;
+				score = 100;
 			break;
 			case Dificultad.Nivel.medio:
 				target = 6;
 				total = 20;
 				ballTime = 1.75f;
+				score = 200;
 			break;
 			case Dificultad.Nivel.dificil:
 				target = 3;
 				total = 25;
 				ballTime = 1.5f;
+				score = 300;
 			break;
 		}
 		fallos = 0;
@@ -60,8 +64,6 @@ public class ClasificadoraGM : MonoBehaviour {
 	}
 
 	void InitBall(){
-		total--;
-		restantesLabel.text = "Restantes: "+total;
 		GameObject go = (GameObject)Instantiate(ballPrefab,ballPrefab.transform.position,ballPrefab.transform.rotation);
 		EsferaClasificadora ec = go.GetComponent<EsferaClasificadora>();
 		ec.rojo = (Random.Range(1f,100f) > 50f ? true : false);
@@ -81,7 +83,11 @@ public class ClasificadoraGM : MonoBehaviour {
 	public void CatchBall(bool b){
 		if(Time.timeScale == 0)
 			return;
-		if(!b)
+		total--;
+		restantesLabel.text = "Restantes: "+total;
+		if(b)
+			GameManager.instance.AddToScore(score);
+		else
 			fallos++;
 		fallosLabel.text = "Fallos: "+fallos;
 		if(total <= 0){
