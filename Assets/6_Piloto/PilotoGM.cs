@@ -8,6 +8,7 @@ public class PilotoGM : MonoBehaviour {
 	public int health = 5;
 	public int height, width;
 	public float screenSpeed = 10;
+	public float screenLength = 30;
 	public Transform espacioNave, nave;
 	private PilotoNave pilotoNave;
 	[HideInInspector]
