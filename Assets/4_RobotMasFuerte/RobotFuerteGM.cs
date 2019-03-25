@@ -22,7 +22,7 @@ public class RobotFuerteGM : MonoBehaviour {
 	private RobotSphere target;
 	public Transform triggerAltura;
 	public Text triggerAlturaText;
-	float height = 1;
+	public float height = 1;
 	float baseHeight = 1.5f;
 
 	void Awake(){
@@ -75,6 +75,7 @@ public class RobotFuerteGM : MonoBehaviour {
 
 	public void Hit(Rigidbody rb){
 		StopMoving();
+		fuerza = Mathf.Clamp(fuerza,0,4);
 		Debug.Log(fuerza);
 		rb.AddForce(new Vector3(0,fuerza * ajusteFuerza,0),ForceMode.Impulse);
 		rb.useGravity = true;
@@ -111,7 +112,7 @@ public class RobotFuerteGM : MonoBehaviour {
 		}*/
 		Vector3 handPosition = Input.mousePosition - new Vector3(Screen.height / 2f, 0f, 0f);
         float horizontalViewportPosition = Camera.main.ScreenToViewportPoint(handPosition).y;
-        float horizontalPosition = horizontalViewportPosition * (height*0.75f) - height/2;
+        float horizontalPosition = horizontalViewportPosition * height - 1;
 		brazo.transform.position = new Vector3(0,horizontalPosition,0);
 		if(moveCam.transform.position.y > 2 && brazo.gameObject.activeSelf)
 			brazo.gameObject.SetActive(false);
