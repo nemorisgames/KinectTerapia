@@ -35,7 +35,7 @@ public class DatabaseManager : MonoBehaviour {
 
     public void DataService(string DatabaseName)
     {
-        var dbPath = string.Format(@"Assets/StreamingAssets/{0}", DatabaseName);
+        var dbPath = string.Format(Application.persistentDataPath + "/{0}", DatabaseName);
         try
         {
             //Try to open de database. If it does not exists, it sends an error
@@ -53,7 +53,8 @@ public class DatabaseManager : MonoBehaviour {
 
     public void CreateDB(string DatabaseName)
     {
-        DBConnection = new SQLiteConnection(string.Format(@"Assets/StreamingAssets/{0}", DatabaseName), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+        DBConnection = new SQLiteConnection(string.Format(Application.persistentDataPath + "/{0}", DatabaseName), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+        print(Application.persistentDataPath + "/" + DatabaseName);
         DBConnection.DropTable<TableAdmin>();
         DBConnection.CreateTable<TableAdmin>();
         DBConnection.InsertAll(new[]{

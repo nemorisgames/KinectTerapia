@@ -63,7 +63,7 @@ public class Ball : MonoBehaviour {
         direction = initialDirection;
     }
     // Update is called once per frame
-    void LateUpdate () {
+    void FixedUpdate () {
         //transform.position = transform.position + direction * speed * Time.deltaTime;
         rigidbody.velocity = direction * speed * Time.deltaTime;
         if(transform.position.y < -2.5f)
