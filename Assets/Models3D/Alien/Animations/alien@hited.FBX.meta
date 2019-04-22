@@ -1,0 +1,267 @@
+fileFormatVersion: 2
+guid: df9cf4dc0eeb1304bb56f1c4fa911bed
+timeCreated: 1518987559
+licenseType: Store
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Alien
+    100002: //RootNode
+    100004: Antenna
+    100006: Bone003
+    100008: Bone003(mirrored)
+    100010: Bone013
+    100012: Bone014
+    100014: Bone015
+    100016: Bone016
+    100018: Bone017
+    100020: Bone018
+    100022: Bone019
+    100024: Bone020
+    100026: Bone021
+    100028: Bone022
+    100030: Bone022(mirrored)
+    100032: Bone024
+    100034: Bone024(mirrored)
+    100036: Bone025
+    100038: Eye
+    100040: EyeController
+    100042: Eyelid_low
+    100044: Eyelid_Sup
+    100046: EyelidLowerController
+    100048: EyelidSupController
+    100050: Foot_L(mirrored)
+    100052: Foot_LController
+    100054: Foot_R
+    100056: Foot_RController
+    100058: GeneralController
+    100060: Head
+    100062: IK Chain001
+    100064: IK Chain002
+    100066: Leg_L(mirrored)
+    100068: Leg_R
+    100070: Line001
+    100072: Pelvis
+    100074: Plane001
+    100076: PupilController
+    100078: RibCage
+    100080: Sphere004
+    400000: Alien
+    400002: //RootNode
+    400004: Antenna
+    400006: Bone003
+    400008: Bone003(mirrored)
+    400010: Bone013
+    400012: Bone014
+    400014: Bone015
+    400016: Bone016
+    400018: Bone017
+    400020: Bone018
+    400022: Bone019
+    400024: Bone020
+    400026: Bone021
+    400028: Bone022
+    400030: Bone022(mirrored)
+    400032: Bone024
+    400034: Bone024(mirrored)
+    400036: Bone025
+    400038: Eye
+    400040: EyeController
+    400042: Eyelid_low
+    400044: Eyelid_Sup
+    400046: EyelidLowerController
+    400048: EyelidSupController
+    400050: Foot_L(mirrored)
+    400052: Foot_LController
+    400054: Foot_R
+    400056: Foot_RController
+    400058: GeneralController
+    400060: Head
+    400062: IK Chain001
+    400064: IK Chain002
+    400066: Leg_L(mirrored)
+    400068: Leg_R
+    400070: Line001
+    400072: Pelvis
+    400074: Plane001
+    400076: PupilController
+    400078: RibCage
+    400080: Sphere004
+    2300000: Plane001
+    2300002: Sphere004
+    3300000: Plane001
+    3300002: Sphere004
+    4300000: Plane001
+    4300002: Sphere004
+    4300004: Alien
+    7400000: hited
+    9500000: //RootNode
+    13700000: Alien
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: hited
+      takeName: Take 001
+      firstFrame: 110
+      lastFrame: 125
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Alien
+        weight: 1
+      - path: GeneralController
+        weight: 1
+      - path: GeneralController/EyeController
+        weight: 1
+      - path: GeneralController/EyeController/EyelidLowerController
+        weight: 1
+      - path: GeneralController/EyeController/EyelidSupController
+        weight: 1
+      - path: GeneralController/EyeController/PupilController
+        weight: 1
+      - path: GeneralController/Foot_LController
+        weight: 1
+      - path: GeneralController/Foot_LController/IK Chain002
+        weight: 1
+      - path: GeneralController/Foot_RController
+        weight: 1
+      - path: GeneralController/Foot_RController/IK Chain001
+        weight: 1
+      - path: GeneralController/Pelvis
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_L(mirrored)
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_L(mirrored)/Bone003(mirrored)
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_L(mirrored)/Bone003(mirrored)/Foot_L(mirrored)
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_L(mirrored)/Bone003(mirrored)/Foot_L(mirrored)/Bone024(mirrored)
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_L(mirrored)/Bone003(mirrored)/Foot_L(mirrored)/Bone024(mirrored)/Bone022(mirrored)
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_R
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_R/Bone003
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_R/Bone003/Foot_R
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_R/Bone003/Foot_R/Bone024
+        weight: 1
+      - path: GeneralController/Pelvis/Leg_R/Bone003/Foot_R/Bone024/Bone022
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014/Bone015
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014/Bone015/Bone016
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014/Bone015/Bone016/Bone017
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014/Bone015/Bone016/Bone017/Bone018
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014/Bone015/Bone016/Bone017/Bone018/Bone019
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014/Bone015/Bone016/Bone017/Bone018/Bone019/Bone020
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Antenna/Bone013/Bone014/Bone015/Bone016/Bone017/Bone018/Bone019/Bone020/Bone021
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Eye
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Eyelid_low
+        weight: 1
+      - path: GeneralController/Pelvis/RibCage/Bone025/Head/Eyelid_Sup
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: GeneralController
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
