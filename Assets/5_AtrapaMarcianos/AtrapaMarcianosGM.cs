@@ -38,6 +38,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
     public UILabel atrapadosLabel;
     public float savedTime;
     IEnumerator trappedAlien;
+    public AudioClip trapSound, catchSound, alienSound;
 
     // Use this for initialization
     void Awake()
@@ -107,6 +108,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
         foreach (float f in posiciones)
         {
             GameObject g = (GameObject)Instantiate(alienPrefab, new Vector3(f, -8.5f, enemyPosZ), alienPrefab.transform.rotation);
+            EventDelegate.Add(g.GetComponent<TweenPosition>().onFinished, () => GameManager.instance.PlayAudio(alienSound));
             aliens.Add(g.GetComponent<TweenPosition>());
         }
         foreach (TweenPosition alien in aliens)
@@ -127,6 +129,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
         hand.transform.position = handPos;
         mano.CampoFuerzaOn(false);
         BlockPosition(false);
+        GameManager.instance.PlayAudio(trapSound);
         foreach (Transform t in hand.transform)
         {
             if (t.tag == "CPU")
@@ -207,6 +210,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
                 launched = true;
                 rb.velocity = Vector3.zero;
                 float launchX = LaunchX(range);
+                GameManager.instance.PlayAudio(catchSound);
                 rb.AddForce(new Vector3(launchX, moveSpeed.y, moveSpeed.x) * launchForce, ForceMode.Impulse);
                 rb.useGravity = true;
                 canLaunch = false;
@@ -345,4 +349,6 @@ public class AtrapaMarcianosGM : MonoBehaviour
         trappedAlien = TrappedAlien();
         StartCoroutine(trappedAlien);
     }
+
+    delegate void AlienAudio();
 }

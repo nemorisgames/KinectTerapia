@@ -8,6 +8,7 @@ public class PilotoCheckpoint : MonoBehaviour
     public bool final = false;
     public MeshRenderer[] luces;
     public Material matGreen, matBlue;
+    public AudioClip checkpointSound;
 
     void Start()
     {
@@ -25,6 +26,7 @@ public class PilotoCheckpoint : MonoBehaviour
             passed = true;
             foreach (MeshRenderer mr in luces)
                 mr.material = matBlue;
+            GameManager.instance.PlayAudio(PilotoGM.Instance.checkpointSound);
             GameManager.instance.AddToScore(PilotoGM.Instance.score);
         }
     }

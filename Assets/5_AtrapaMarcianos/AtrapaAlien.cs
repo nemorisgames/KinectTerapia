@@ -7,6 +7,7 @@ public class AtrapaAlien : MonoBehaviour
     Rigidbody rb;
     public float target;
     public Transform campoFuerza;
+    public AudioClip appearAudio;
 
 
     // Use this for initialization

@@ -26,6 +26,7 @@ public class RobotFuerteGM : MonoBehaviour
     public float height = 1;
     float baseHeight = 1.5f;
     public float heightMult = 3;
+    public AudioClip hitSound;
 
     void Awake()
     {
@@ -81,6 +82,7 @@ public class RobotFuerteGM : MonoBehaviour
 
     public void Hit(Rigidbody rb)
     {
+        GameManager.instance.PlayAudio(hitSound);
         StopMoving();
         fuerza = Mathf.Clamp(fuerza, 0, 4);
         Debug.Log(fuerza);

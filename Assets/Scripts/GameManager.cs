@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
     public static GameManager instance = null;
     [HideInInspector]
     public int currentLevel = 1;
@@ -18,12 +19,17 @@ public class GameManager : MonoBehaviour {
     public TweenAlpha youLoseScreen;
     public UILabel loseScore;
     private PositionTransformator config;
+    private AudioSource audioSource;
+    public AudioClip winSound, loseSound;
 
-    void Awake(){
+    void Awake()
+    {
         config = GameObject.FindObjectOfType<PositionTransformator>();
+        audioSource = GetComponent<AudioSource>();
     }
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         if (instance == null)
         {
             instance = this;
@@ -36,10 +42,11 @@ public class GameManager : MonoBehaviour {
             }
         }
         Time.timeScale = 0f;
-        if(loseScore == null)
+        if (loseScore == null)
             loseScore = youLoseScreen.transform.Find("Subtitle").GetComponent<UILabel>();
-        
-        if(config != null){
+
+        if (config != null)
+        {
             // = PlayerPrefs.GetInt("handSelected"),
             config.horLimits.x = PlayerPrefs.GetFloat("limitHorMin");
             config.horLimits.y = PlayerPrefs.GetFloat("limitHorMax");
@@ -56,12 +63,14 @@ public class GameManager : MonoBehaviour {
         scoreLabel.text = "" + currentScore;
     }
 
-    public void SubstractFromScore(int points){
+    public void SubstractFromScore(int points)
+    {
         currentScore -= points;
         scoreLabel.text = "" + currentScore;
     }
 
-    public void SetScore(int points){
+    public void SetScore(int points)
+    {
         currentScore = points;
         scoreLabel.text = "" + currentScore;
     }
@@ -80,9 +89,10 @@ public class GameManager : MonoBehaviour {
 
     public void FinishLevel()
     {
+        PlayAudio(winSound);
         Time.timeScale = 0f;
         currentLevel++;
-        if(currentLevel > 3)
+        if (currentLevel > 3)
         {
             finalScoreLabel.text = "Puntaje: " + currentScore;
             youWinScreen.PlayForward();
@@ -93,20 +103,23 @@ public class GameManager : MonoBehaviour {
             nextLevelScreen.PlayForward();
             levelLabel.text = "Nivel " + currentLevel;
         }
-        
+
     }
 
-    public void LevelFailed(){
+    public void LevelFailed()
+    {
+        PlayAudio(loseSound);
         Time.timeScale = 0f;
         youLoseScreen.PlayForward();
-        if(loseScore != null)
+        if (loseScore != null)
             loseScore.text = "Puntaje: \n" + currentScore;
         SaveHeatmap();
-             
+
     }
 
-    void SaveHeatmap(){
-        if(HandPosition.Instance == null)
+    void SaveHeatmap()
+    {
+        if (HandPosition.Instance == null)
             return;
         HandPosition.Instance.SavePoints();
     }
@@ -118,16 +131,24 @@ public class GameManager : MonoBehaviour {
 
     public void Exit()
     {
-        DatabaseManager.instance.SaveSession(SceneManager.GetActiveScene().name,currentScore,1,1);
+        DatabaseManager.instance.SaveSession(SceneManager.GetActiveScene().name, currentScore, 1, 1);
         SceneManager.LoadScene("GameGrid");
     }
 
     // Update is called once per frame
-    void Update () {
-		
-        if(Input.GetKeyDown(KeyCode.Space)){
+    void Update()
+    {
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
             LevelFailed();
         }
-        
-	}
+
+    }
+
+    public void PlayAudio(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+            audioSource.PlayOneShot(clip);
+    }
 }

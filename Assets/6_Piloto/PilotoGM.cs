@@ -18,6 +18,7 @@ public class PilotoGM : MonoBehaviour
     public Vector3 lastPos;
     public GameObject[] vidas;
     public GameObject[] etapa;
+    public AudioClip checkpointSound;
 
     // Use this for initialization
     void Awake()

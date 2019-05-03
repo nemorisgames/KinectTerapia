@@ -13,6 +13,7 @@ public class PilotoNave : MonoBehaviour
     private float lastPos;
     private float rotation;
     public GameObject particles;
+    public AudioClip hitSound;
 
     void Awake()
     {
@@ -23,6 +24,7 @@ public class PilotoNave : MonoBehaviour
     {
         invincible = true;
         Instantiate(particles, transform.position, particles.transform.rotation, transform.parent);
+        GameManager.instance.PlayAudio(hitSound);
         mr.material.color = Color.red;
         yield return new WaitForSeconds(1f);
         mr.material.color = Color.white;
