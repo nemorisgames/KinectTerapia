@@ -14,7 +14,7 @@ public class MecanicoMano : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(part != null)
-			part.transform.position = new Vector3(transform.position.x,transform.position.y,0.5f);
+			part.transform.position = new Vector3(transform.position.x,transform.position.y - 0.5f,transform.position.z);
 	}
 
 	void OnTriggerEnter(Collider c){

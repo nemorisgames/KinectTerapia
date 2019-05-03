@@ -35,7 +35,7 @@ public class DatabaseManager : MonoBehaviour {
 
     public void DataService(string DatabaseName)
     {
-        var dbPath = string.Format(Application.persistentDataPath + "/{0}", DatabaseName);
+        var dbPath = string.Format(Application.dataPath + "/Resources" + "/{0}", DatabaseName);
         try
         {
             //Try to open de database. If it does not exists, it sends an error
@@ -53,8 +53,9 @@ public class DatabaseManager : MonoBehaviour {
 
     public void CreateDB(string DatabaseName)
     {
-        DBConnection = new SQLiteConnection(string.Format(Application.persistentDataPath + "/{0}", DatabaseName), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
-        print(Application.persistentDataPath + "/" + DatabaseName);
+        //Application.persistentDataPath
+        DBConnection = new SQLiteConnection(string.Format(Application.dataPath + "/Resources" + "/{0}", DatabaseName), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+        //print(Application.persistentDataPath + "/" + DatabaseName);
         DBConnection.DropTable<TableAdmin>();
         DBConnection.CreateTable<TableAdmin>();
         DBConnection.InsertAll(new[]{
@@ -200,6 +201,40 @@ public class DatabaseManager : MonoBehaviour {
         if(k.Count() > 0)
             pk_kinesiologist = k.First().pk_kinesiologist;
         return pk_kinesiologist;
+    }
+
+    public void SaveSession(string game, int score, float speedMin, float speedMax){
+        int currentGame = int.Parse(game.Substring(4,1));
+        int currentConfiguration = PlayerPrefs.GetInt("currentConfiguration",1);
+        DBConnection.Insert(new TableSession{
+            fk_configuration = currentConfiguration,
+            fk_game = currentGame,
+            fk_patient = PlayerPrefs.GetInt("pk_patient"),
+            score = score,
+            dateSession = System.DateTime.Now.ToString(),
+            speedMin = speedMin,
+            speedMax = speedMax,
+            heatMap = "image.png"
+        });
+        /*List<TableSession> ts = DBConnection.Query<TableSession>("select * from TableSession");
+        foreach(TableSession t in ts)
+            Debug.Log(t.pk_session + " | " + t.fk_game+ " | "+t.score);*/
+    }
+
+    public void SaveConfiguration(){
+        List<TableConfiguration> tc = DBConnection.Query<TableConfiguration>("select * from TableConfiguration");
+        int conf = tc.Count + 1;
+        DBConnection.Insert(new TableConfiguration{
+            pk_configuration = conf,
+            hand = PlayerPrefs.GetInt("handSelected"),
+            rangeHorMin = PlayerPrefs.GetFloat("limitHorMin"),
+            rangeHorMax = PlayerPrefs.GetFloat("limitHorMax"),
+            rangeVerMin = PlayerPrefs.GetFloat("limitVerMin"),
+            rangeVerMax = PlayerPrefs.GetFloat("limitVerMax"),
+            rangeDeepMin = PlayerPrefs.GetFloat("limitDepthMin"),
+            rangeDeepMax = PlayerPrefs.GetFloat("limitDepthMax")
+        });
+        PlayerPrefs.SetInt("currentConfiguration",conf);
     }
 
     public TablePatient[] GetPatientsInKinesiologist()

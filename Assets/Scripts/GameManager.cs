@@ -17,7 +17,11 @@ public class GameManager : MonoBehaviour {
     public TweenAlpha youWinScreen;
     public TweenAlpha youLoseScreen;
     public UILabel loseScore;
+    private PositionTransformator config;
 
+    void Awake(){
+        config = GameObject.FindObjectOfType<PositionTransformator>();
+    }
     // Use this for initialization
     void Start () {
         if (instance == null)
@@ -34,6 +38,16 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 0f;
         if(loseScore == null)
             loseScore = youLoseScreen.transform.Find("Subtitle").GetComponent<UILabel>();
+        
+        if(config != null){
+            // = PlayerPrefs.GetInt("handSelected"),
+            config.horLimits.x = PlayerPrefs.GetFloat("limitHorMin");
+            config.horLimits.y = PlayerPrefs.GetFloat("limitHorMax");
+            config.verLimits.x = PlayerPrefs.GetFloat("limitVerMin");
+            config.verLimits.y = PlayerPrefs.GetFloat("limitVerMax");
+            config.depthLimits.x = PlayerPrefs.GetFloat("limitDepthMin");
+            config.depthLimits.y = PlayerPrefs.GetFloat("limitDepthMax");
+        }
     }
 
     public void AddToScore(int points)
@@ -72,19 +86,29 @@ public class GameManager : MonoBehaviour {
         {
             finalScoreLabel.text = "Puntaje: " + currentScore;
             youWinScreen.PlayForward();
+            SaveHeatmap();
         }
         else
         {
             nextLevelScreen.PlayForward();
             levelLabel.text = "Nivel " + currentLevel;
         }
+        
     }
 
     public void LevelFailed(){
+        Time.timeScale = 0f;
         youLoseScreen.PlayForward();
         if(loseScore != null)
             loseScore.text = "Puntaje: \n" + currentScore;
+        SaveHeatmap();
              
+    }
+
+    void SaveHeatmap(){
+        if(HandPosition.Instance == null)
+            return;
+        HandPosition.Instance.SavePoints();
     }
 
     public void PlayAgain()
@@ -94,11 +118,16 @@ public class GameManager : MonoBehaviour {
 
     public void Exit()
     {
+        DatabaseManager.instance.SaveSession(SceneManager.GetActiveScene().name,currentScore,1,1);
         SceneManager.LoadScene("GameGrid");
     }
 
     // Update is called once per frame
     void Update () {
 		
+        if(Input.GetKeyDown(KeyCode.Space)){
+            LevelFailed();
+        }
+        
 	}
 }

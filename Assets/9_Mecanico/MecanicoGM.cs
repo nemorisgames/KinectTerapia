@@ -91,9 +91,9 @@ public class MecanicoGM : MonoBehaviour {
 			GameObject g = (GameObject)Instantiate(partPrefab,partPrefab.transform.position,partPrefab.transform.rotation);
 			MecanicoPieza p = g.GetComponent<MecanicoPieza>();
 			spawnedParts.Add(p);
-			Vector3 randPos = new Vector3(Random.Range(3f,8f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(3f,5f)*Mathf.Sign(Random.Range(-1,1)), g.transform.position.z );
+			Vector3 randPos = new Vector3(Random.Range(3f,8f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(1f,2f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(3f,5f)*Mathf.Sign(Random.Range(-1,1)) );
 			while(!CheckPos(randPos,2f))
-				randPos = new Vector3(Random.Range(3f,8f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(3f,5f)*Mathf.Sign(Random.Range(-1,1)), g.transform.position.z );
+				randPos = new Vector3(Random.Range(3f,8f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(1f,2f)*Mathf.Sign(Random.Range(-1,1)), Random.Range(3f,5f)*Mathf.Sign(Random.Range(-1,1)) );
 			g.transform.position = randPos;
 			if(i < numSlots)
 				p.type = (PartType)(i+1);
@@ -106,7 +106,7 @@ public class MecanicoGM : MonoBehaviour {
 	bool CheckPos(Vector3 newPos, float margen){
 		foreach(MecanicoPieza p in spawnedParts){
 			float distance = Vector3.Distance(newPos,p.transform.position);
-			Debug.Log(distance);
+			//Debug.Log(distance);
 			if(distance < margen)
 				return false;
 		}
@@ -118,12 +118,25 @@ public class MecanicoGM : MonoBehaviour {
 			return;
 
 		if(moveWithMouse){
+			/*
 			Vector3 handPosition = Input.mousePosition - new Vector3(Screen.width/2, Screen.height/2, 0f);
 			Vector3 viewport = Camera.main.ScreenToViewportPoint(handPosition);
 			float vPos = viewport.y * height;
 			float hPos = viewport.x * width;
-			moveRef.position = new Vector3(hPos,vPos,0);
+			float zPos = Mathf.Clamp(moveRef.position.z + Input.GetAxis("Vertical") * Time.deltaTime * 5, -3,8);
+			moveRef.position = new Vector3(hPos,vPos,zPos);
+			*/
+			int vMove = 0;
+			if(Input.GetKey(KeyCode.Q))
+				vMove = 1;
+			else if(Input.GetKey(KeyCode.E))
+				vMove = -1;
+			float vPos = Mathf.Clamp(moveRef.position.y + vMove * Time.deltaTime * 5,-3,8);
+			float hPos = Mathf.Clamp(moveRef.position.x + Input.GetAxis("Horizontal") * Time.deltaTime * 5, -8,8);
+			float zPos = Mathf.Clamp(moveRef.position.z + Input.GetAxis("Vertical") * Time.deltaTime * 5, -8,8);
+			moveRef.position = new Vector3(hPos,vPos,zPos);
 		}
+
 	}
 
 	void LateUpdate()

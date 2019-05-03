@@ -171,7 +171,8 @@ public class Configuration : MonoBehaviour {
         PlayerPrefs.SetFloat("limitVerMax", verticalLimits[1].transform.position.y);
         PlayerPrefs.SetFloat("limitDepthMin", depthLimits[0].transform.position.z);
         PlayerPrefs.SetFloat("limitDepthMax", depthLimits[1].transform.position.z);
-    
+
+        DatabaseManager.instance.SaveConfiguration();
         SceneManager.LoadScene("GameGrid");
     }
 

@@ -37,7 +37,7 @@ public class EsferaClasificadora : MonoBehaviour {
 			move = false;
 		}
 
-		if(Mathf.Abs(transform.position.x) >= ClasificadoraGM.Instance.rightExit.position.x || transform.position.y < -3){
+		if(Mathf.Abs(transform.position.x) >= ClasificadoraGM.Instance.rightExit.position.x - ClasificadoraGM.Instance.rightExit.localScale.x/3 || transform.position.y < -3){
 			if((transform.position.x > 0 && !rojo) || (transform.position.x < 0 && rojo)){
 				if(transform.position.z > 3f && transform.position.z < 4f)
 					ClasificadoraGM.Instance.CatchBall(true);

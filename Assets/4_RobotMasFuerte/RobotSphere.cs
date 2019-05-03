@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RobotSphere : MonoBehaviour {
 	Rigidbody rb;
-	bool launched = false;
+	public bool launched = false;
 	public float height = 0;
 	public float currentHeight = 0;
 	private float lastHeight = 0;
@@ -18,8 +18,7 @@ public class RobotSphere : MonoBehaviour {
 		if(launched)
 			return;
 		if(c.tag == "Player"){
-			launched = true;
-			RobotFuerteGM.Instance.Hit(rb);
+			HitSphere();
 		}
 	}
 
@@ -34,14 +33,23 @@ public class RobotSphere : MonoBehaviour {
 				if(transform.position.y > lastHeight)
 				{
 					currentHeight = Mathf.Clamp(transform.position.y - 1.5f,0,height - 1.5f);
-					GameManager.instance.SetScore((int)(currentHeight * 200));
+					GameManager.instance.SetScore((int)(currentHeight * 100));
 				}
 			}
 			lastHeight = transform.position.y;
+
+			if(transform.position.y <= 0){
+				RobotFuerteGM.Instance.LevelFailed();
+			}
 		}
 	}
 
 	public void Setup(float h){
 		height = h;
+	}
+
+	public void HitSphere(){
+		launched = true;
+		RobotFuerteGM.Instance.Hit(rb);
 	}
 }
