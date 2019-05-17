@@ -124,6 +124,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
             StopCoroutine(trappedAlien);
         launched = false;
         detenido = false;
+        PositionTransformator.Instance.ForcePosition(true);
         rb.useGravity = false;
         rb.velocity = Vector3.zero;
         hand.transform.position = handPos;
@@ -182,7 +183,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
     }
 
     // Update is called once per frame
-    Vector3 lastPos;
+    public Vector3 lastPos;
     void Update()
     {
         if (Time.timeScale == 0)
@@ -195,18 +196,21 @@ public class AtrapaMarcianosGM : MonoBehaviour
             //Debug.Log(index);
             StartCoroutine(MoveAlien(index, alienTime));
         }
+        /* 
         Vector3 handPosition = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2, 0f);
         Vector3 viewport = Camera.main.ScreenToViewportPoint(handPosition);
         float vPos = viewport.y * height;
         float hPos = viewport.x * width;
-        manoRef.transform.position = new Vector3(hPos, vPos, 0);
-
+        //manoRef.transform.position = new Vector3(hPos, vPos, 0);
+        */
         if (!launched)
         {
-            if (!canLaunch && manoRef.transform.position.y < 0)
+            if (!canLaunch && manoRef.transform.position.y < -1f)
                 canLaunch = true;
-            if (manoRef.transform.position.y > 2f && canLaunch)
+            if (manoRef.transform.position.y > 0 && canLaunch)
             {
+                Debug.Log("launched");
+                PositionTransformator.Instance.ForcePosition(false);
                 launched = true;
                 rb.velocity = Vector3.zero;
                 float launchX = LaunchX(range);
@@ -251,12 +255,12 @@ public class AtrapaMarcianosGM : MonoBehaviour
     {
         if (range == 3)
         {
-            if (manoRef.transform.position.x < -1.5f)
+            if (manoRef.transform.position.x < -3f)
             {
                 mano.target = posiciones[0];
                 return -5;
             }
-            else if (manoRef.transform.position.x > 1.5f)
+            else if (manoRef.transform.position.x > 3f)
             {
                 mano.target = posiciones[2];
                 return 5;
@@ -268,7 +272,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
         }
         else if (range == 4)
         {
-            if (manoRef.transform.position.x < -3f)
+            if (manoRef.transform.position.x < -6f)
             {
                 mano.target = posiciones[0];
                 return -6f;
@@ -278,7 +282,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
                 mano.target = posiciones[1];
                 return -2f;
             }
-            else if (manoRef.transform.position.x >= 0 && manoRef.transform.position.x <= 3f)
+            else if (manoRef.transform.position.x >= 0 && manoRef.transform.position.x <= 6f)
             {
                 mano.target = posiciones[2];
                 return 2f;
@@ -294,22 +298,22 @@ public class AtrapaMarcianosGM : MonoBehaviour
         }
         else if (range == 5)
         {
-            if (manoRef.transform.position.x < -3f)
+            if (manoRef.transform.position.x < -7f)
             {
                 mano.target = posiciones[0];
                 return -8f;
             }
-            else if (manoRef.transform.position.x < -1f)
+            else if (manoRef.transform.position.x < -3f)
             {
                 mano.target = posiciones[1];
                 return -4f;
             }
-            else if (manoRef.transform.position.x > 1f && manoRef.transform.position.x <= 3f)
+            else if (manoRef.transform.position.x > 3f && manoRef.transform.position.x <= 7f)
             {
                 mano.target = posiciones[3];
                 return 4f;
             }
-            else if (manoRef.transform.position.x > 3f)
+            else if (manoRef.transform.position.x > 7f)
             {
                 mano.target = posiciones[4];
                 return 8f;

@@ -3,31 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine.Utility;
+using System.Linq;
 
 public class RobotFuerteGM : MonoBehaviour
 {
     public static RobotFuerteGM Instance;
     public Transform brazo;
     public Transform pivoteBrazo;
-    public BoxCollider hitbox;
     public GameObject esferaPrefab;
     public Cinemachine.CinemachineVirtualCamera baseCam, moveCam;
     public Dificultad.Nivel dificultad;
-    private Vector3 lastMousePos;
+    public Vector3 lastMousePos;
     private Vector3 mousePos;
-    private List<Vector3> trackedMovement;
-    public float armPos;
-    public float ajusteY = 0.75f;
+    public List<Vector3> trackedMovement;
     public float ajusteFuerza = 0.75f;
     public float fuerza;
-    private Vector3 rotation = new Vector3(0, -30, 0);
     public RobotSphere target;
     public Transform[] triggerAltura;
-    public float height = 1;
     float baseHeight = 1.5f;
     public float heightMult = 3;
     public AudioClip hitSound;
-
+    private bool gameStarted = false;
     void Awake()
     {
         if (Instance == null)
@@ -45,26 +41,8 @@ public class RobotFuerteGM : MonoBehaviour
 
     public void Init()
     {
-        brazo.gameObject.SetActive(true);
-        hitbox.enabled = true;
-        target = ((GameObject)Instantiate(esferaPrefab, esferaPrefab.transform.position, esferaPrefab.transform.rotation)).GetComponent<RobotSphere>();
-        moveCam.Follow = target.transform;
-        moveCam.Priority = 11;
-        switch (dificultad)
-        {
-            case Dificultad.Nivel.facil:
-                target.Setup(triggerAltura[0].position.y);
-                ajusteFuerza = 5f;
-                break;
-            case Dificultad.Nivel.medio:
-                target.Setup(triggerAltura[1].position.y);
-                ajusteFuerza = 5.8f;
-                break;
-            case Dificultad.Nivel.dificil:
-                target.Setup(triggerAltura[2].position.y);
-                ajusteFuerza = 6.8f;
-                break;
-        }
+        gameStarted = false;
+        target = null;
     }
 
     public void Restart()
@@ -84,54 +62,44 @@ public class RobotFuerteGM : MonoBehaviour
     {
         GameManager.instance.PlayAudio(hitSound);
         StopMoving();
-        fuerza = Mathf.Clamp(fuerza, 0, 4);
-        Debug.Log(fuerza);
+        fuerza = Mathf.Clamp(fuerza, 0, 4f);
+        //Debug.Log(fuerza);
         rb.AddForce(new Vector3(0, fuerza * ajusteFuerza, 0), ForceMode.Impulse);
         rb.useGravity = true;
         rb.GetComponent<SphereCollider>().enabled = false;
-        hitbox.enabled = false;
     }
 
     public bool moving = false;
-    float[] moveDist = new float[2];
+    IEnumerator movingCoroutine;
+
+    IEnumerator StartMoving()
+    {
+        moving = true;
+        trackedMovement.Clear();
+        trackedMovement.Add(lastMousePos);
+        int count = trackedMovement.Count;
+        yield return new WaitForSeconds(0.1f);
+        while (Vector3.Distance(lastMousePos, trackedMovement[Mathf.Clamp(count - 1, 0, int.MaxValue)]) > 0.1f)
+        {
+            trackedMovement.Add(lastMousePos);
+            count = trackedMovement.Count;
+            yield return new WaitForSeconds(0.1f);
+        }
+        StopMoving();
+    }
 
     void Update()
     {
         if (Time.timeScale == 0)
             return;
-        mousePos = Input.mousePosition;
-        /* if(lastMousePos != null && Vector3.Distance(mousePos,lastMousePos) > 0.1f){
-			trackedMovement.Add(mousePos);
-		}
-		else if(!stopping){
-			StartCoroutine(stopDelay());
-		}*/
-        if (!moving && Vector3.Distance(mousePos, lastMousePos) > 0.05f)
+        mousePos = brazo.position;
+
+        if (!moving && lastMousePos != null && Vector3.Distance(mousePos, lastMousePos) > 0.1f)
         {
-            moving = true;
-            moveDist[0] = armPos;
+            movingCoroutine = StartMoving();
+            StartCoroutine(movingCoroutine);
         }
-        if (moving && Vector3.Distance(mousePos, lastMousePos) < 0.05f)
-        {
-            StartCoroutine(stopDelay());
-        }
-
-
-        armPos = (mousePos.y / Screen.height) - ajusteY;
-        /*if(armPos <= 1){
-			rotation.x = (armPos * 90) / -1;
-			brazo.eulerAngles = rotation;
-		}*/
-        Vector3 handPosition = Input.mousePosition - new Vector3(Screen.height / 2f, 0f, 0f);
-        float horizontalViewportPosition = Camera.main.ScreenToViewportPoint(handPosition).y;
-        float horizontalPosition = horizontalViewportPosition * height - 1;
-        brazo.transform.position = new Vector3(0, horizontalPosition, brazo.position.z);
-        if (moveCam.transform.position.y > 2 && brazo.gameObject.activeSelf)
-            brazo.gameObject.SetActive(false);
-
-
         lastMousePos = mousePos;
-        //fuerza = trackedMovement.Count;
         pivoteBrazo.LookAt(brazo, Vector3.up);
 
         if (target != null && !target.launched && brazo.position.y >= target.transform.position.y)
@@ -139,6 +107,34 @@ public class RobotFuerteGM : MonoBehaviour
             target.HitSphere();
         }
 
+        if (!gameStarted && brazo.position.y <= -1.5f)
+        {
+            StartCoroutine(startBall());
+        }
+    }
+
+    IEnumerator startBall()
+    {
+        gameStarted = true;
+        yield return new WaitForSeconds(1f);
+        target = ((GameObject)Instantiate(esferaPrefab, esferaPrefab.transform.position, esferaPrefab.transform.rotation)).GetComponent<RobotSphere>();
+        moveCam.Follow = target.transform;
+        moveCam.Priority = 11;
+        switch (dificultad)
+        {
+            case Dificultad.Nivel.facil:
+                target.Setup(triggerAltura[0].position.y);
+                ajusteFuerza = 5f;
+                break;
+            case Dificultad.Nivel.medio:
+                target.Setup(triggerAltura[1].position.y);
+                ajusteFuerza = 6.2f;
+                break;
+            case Dificultad.Nivel.dificil:
+                target.Setup(triggerAltura[2].position.y);
+                ajusteFuerza = 7.2f;
+                break;
+        }
     }
 
     IEnumerator stopDelay()
@@ -150,9 +146,12 @@ public class RobotFuerteGM : MonoBehaviour
 
     public void StopMoving()
     {
+        if (movingCoroutine != null)
+        {
+            StopCoroutine(movingCoroutine);
+        }
         moving = false;
-        moveDist[1] = armPos;
-        fuerza = (moveDist[1] - moveDist[0]) * 10;
+        fuerza = (trackedMovement[Mathf.Clamp(trackedMovement.Count - 1, 0, int.MaxValue)].y - trackedMovement[0].y) * 2.5f;
     }
 
     public void LevelWon()

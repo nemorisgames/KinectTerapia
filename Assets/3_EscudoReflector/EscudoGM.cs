@@ -27,16 +27,17 @@ public class EscudoGM : MonoBehaviour
     void Awake()
     {
         rand = new System.Random();
+
+
+    }
+
+    // Update is called once per frame
+    void Start()
+    {
         cpuNave.SetGM(this);
         player.width = limit + 1;
         player.moveSpeed = playerSpeed;
         Init();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void SetCPUStation()

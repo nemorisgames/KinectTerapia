@@ -45,12 +45,17 @@ public class PilotoGM : MonoBehaviour
         //if(nave.localPosition.x != hPos || nave.localPosition.y != vPos)
         //	pilotoNave.rigidbody().AddForce(hPos - nave.localPosition.x,vPos - nave.localPosition.y,0);
 
-        nave.localPosition = new Vector3(hPos, vPos, 0);
+        //nave.localPosition = new Vector3(hPos, vPos, 0);
 
         Vector3 screenPos = espacioNave.transform.position;
         espacioNave.position = new Vector3(screenPos.x + Time.deltaTime * screenSpeed, screenPos.y, screenPos.z);
 
         lastPos = nave.localPosition;
+    }
+
+    private void LateUpdate()
+    {
+        nave.localPosition = new Vector3(nave.localPosition.x, nave.localPosition.y, 0);
     }
 
     void ActivarEtapa(int i)

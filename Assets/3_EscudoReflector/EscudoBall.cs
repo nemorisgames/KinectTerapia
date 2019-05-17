@@ -96,6 +96,14 @@ public class EscudoBall : MonoBehaviour
                     }
                     angle += player.speed;
                 }
+                if (transform.position.x > 5)
+                {
+                    angle = Mathf.Clamp(angle, float.MinValue, 0);
+                }
+                if (transform.position.x < -5)
+                {
+                    angle = Mathf.Clamp(angle, 0, float.MaxValue);
+                }
                 gm.cpuNave.ballAngle = angle;
                 UpdateSpeed(1);
                 break;
