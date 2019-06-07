@@ -29,7 +29,7 @@ public class DatabaseManager : MonoBehaviour
             }
         }
 
-        testForceDBCreation = (PlayerPrefs.GetInt("TestDB", 0) == 1 ? true : false);
+        //testForceDBCreation = (PlayerPrefs.GetInt("TestDB", 0) == 1 ? true : false);
         if (testForceDBCreation)
             CreateDB("JuegosKinect.db");
         else
@@ -66,8 +66,8 @@ public class DatabaseManager : MonoBehaviour
         DBConnection.CreateTable<TableAdmin>();
         DBConnection.InsertAll(new[]{
             new TableAdmin{
-                username = "Admin",
-                password = "Admin"
+                username = "admin",
+                password = "admin"
             }
         });
 
@@ -209,6 +209,15 @@ public class DatabaseManager : MonoBehaviour
         return pk_kinesiologist;
     }
 
+    public int LoginAdmin(string username, string password)
+    {
+        int pk_admin = -1;
+        var a = DBConnection.Table<TableAdmin>().Where(x => x.username == username && x.password == password);
+        if (a.Count() > 0)
+            pk_admin = a.First().pk_admin;
+        return pk_admin;
+    }
+
     public void SaveSession(string game, int score, float speedMin, float speedMax)
     {
         int currentGame = int.Parse(game.Substring(4, 1));
@@ -259,6 +268,21 @@ public class DatabaseManager : MonoBehaviour
                 tablePatients[i] = p.ElementAt(i);
             }
             return tablePatients;
+        }
+        return null;
+    }
+
+    public TableKinesiologist[] GetKinesiologists()
+    {
+        var p = DBConnection.Table<TableKinesiologist>();
+        if (p.Count() > 0)
+        {
+            TableKinesiologist[] tablKinesiologists = new TableKinesiologist[p.Count()];
+            for (int i = 0; i < p.Count(); i++)
+            {
+                tablKinesiologists[i] = p.ElementAt(i);
+            }
+            return tablKinesiologists;
         }
         return null;
     }

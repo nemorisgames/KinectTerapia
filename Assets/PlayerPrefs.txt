@@ -1,4 +1,5 @@
 pk_kinesiologist
+pk_admin
 pk_patient
 pk_game
 handSelected = -1 ó 1 ó 0(ambas)

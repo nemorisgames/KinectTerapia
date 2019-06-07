@@ -91,9 +91,9 @@ public class MecanicoGM : MonoBehaviour {
 			GameObject g = (GameObject)Instantiate(partPrefab,partPrefab.transform.position,partPrefab.transform.rotation);
 			MecanicoPieza p = g.GetComponent<MecanicoPieza>();
 			spawnedParts.Add(p);
-			Vector3 randPos = new Vector3(Random.Range(3f,8f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(1f,2f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(3f,5f)*Mathf.Sign(Random.Range(-1,1)) );
+			Vector3 randPos = new Vector3(Random.Range(2f,6f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(1f,2f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(2f,4f)*Mathf.Sign(Random.Range(-1,1)) );
 			while(!CheckPos(randPos,2f))
-				randPos = new Vector3(Random.Range(3f,8f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(1f,2f)*Mathf.Sign(Random.Range(-1,1)), Random.Range(3f,5f)*Mathf.Sign(Random.Range(-1,1)) );
+				randPos = new Vector3(Random.Range(2f,6f)*Mathf.Sign(Random.Range(-1,1)) , Random.Range(1f,2f)*Mathf.Sign(Random.Range(-1,1)), Random.Range(2f,4f)*Mathf.Sign(Random.Range(-1,1)) );
 			g.transform.position = randPos;
 			if(i < numSlots)
 				p.type = (PartType)(i+1);
