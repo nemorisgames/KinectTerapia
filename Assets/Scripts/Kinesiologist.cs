@@ -3,35 +3,61 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Kinesiologist : MonoBehaviour {
-    public UILabel nameKinesiologist;
-    int pk_patient;
-    //PatientsList patientsList;
-	// Use this for initialization
-	void Start () {
-		
-	}
+public class Kinesiologist : MonoBehaviour
+{
+    public UILabel nameKinesiologist, numPatients;
+    int pk_kinesiologist;
+    private TableKinesiologist kine;
 
-    public void SetInformation(int pk_patient, string name)
+    public void SetInformation (TableKinesiologist tk)
     {
-        nameKinesiologist.text = name;
-        this.pk_patient = pk_patient;
-        //patientsList = transform.root.GetComponent<PatientsList>();
+        nameKinesiologist.text = tk.name;
+        pk_kinesiologist = tk.pk_kinesiologist;
+        kine = tk;
+        if (numPatients != null)
+        {
+            TablePatient[] tp = DatabaseManager.instance.GetPatientsInKinesiologist (pk_kinesiologist);
+            if (tp != null)
+                numPatients.text = (tp.Length).ToString ();
+            else
+                numPatients.text = "0";
+        }
+
     }
 
-    public void ButtonEdit()
+    public void ButtonEdit ()
     {
-        PlayerPrefs.SetInt("pk_patient", pk_patient);
-        SceneManager.LoadScene("Configuration");
+        KinesiologistList kl = transform.root.GetComponent<KinesiologistList> ();
+        if (kl != null)
+        {
+            kl.EditKine (kine);
+        }
     }
 
-    public void ButtonDelete()
+    public void ButtonDelete ()
     {
-        //patientsList.CheckResults(pk_patient);
+        KinesiologistList kl = transform.root.GetComponent<KinesiologistList> ();
+        if (kl != null)
+        {
+            kl.DeleteKine (kine);
+        }
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    public void ButtonSelect ()
+    {
+        KinesiologistList kl = transform.root.GetComponent<KinesiologistList> ();
+        if (kl != null)
+        {
+            kl.KinesiologistLinkPatient (pk_kinesiologist);
+        }
+    }
+
+    public void ButtonPatients ()
+    {
+        KinesiologistList kl = transform.root.GetComponent<KinesiologistList> ();
+        if (kl != null)
+        {
+            kl.ShowPatients (true, kine.pk_kinesiologist);
+        }
+    }
 }
