@@ -18,7 +18,7 @@ public class PatientInKinesiologist : MonoBehaviour
         pk_patient = tp.pk_patient;
         fk_kinesiologist = tp.fk_kinesiologist;
         TableKinesiologist kine = DatabaseManager.instance.GetKinesiologist (fk_kinesiologist);
-        if (kine != null)
+        if (kine != null && nameKine != null)
             nameKine.text = kine.name;
         patientsList = transform.root.GetComponent<PatientsList> ();
     }

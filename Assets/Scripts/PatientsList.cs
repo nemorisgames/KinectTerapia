@@ -22,6 +22,10 @@ public class PatientsList : MonoBehaviour
         patientsDetails = new ArrayList ();
         TablePatient[] tablePatients = DatabaseManager.instance.GetPatientsInKinesiologist ();
         int cont = 0;
+
+        if (tablePatients == null)
+            return;
+
         foreach (TablePatient t in tablePatients)
         {
             GameObject g = (GameObject) Instantiate (patientInKinesiologist);

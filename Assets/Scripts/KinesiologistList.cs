@@ -204,6 +204,8 @@ public class KinesiologistList : MonoBehaviour
         labelRellenarCampos.gameObject.SetActive (false);
         editKine.SetActive (false);
         editPatient.SetActive (false);
+        verificarDeleteKine.transform.parent.gameObject.SetActive (false);
+        verificarDeletePatient.transform.parent.gameObject.SetActive (false);
 
         kineButtons.SetActive (false);
         patientButtons.SetActive (b);
@@ -219,6 +221,9 @@ public class KinesiologistList : MonoBehaviour
             tablePatients = DatabaseManager.instance.GetPatientsInKinesiologist (pk_kine);
         else
             tablePatients = DatabaseManager.instance.GetPatients ();
+
+        if (tablePatients == null)
+            return;
 
         for (int i = 0; i < tablePatients.Length; i++)
         {
@@ -240,6 +245,8 @@ public class KinesiologistList : MonoBehaviour
         labelRellenarCampos.gameObject.SetActive (false);
         editKine.SetActive (false);
         editPatient.SetActive (false);
+        verificarDeleteKine.transform.parent.gameObject.SetActive (false);
+        verificarDeletePatient.transform.parent.gameObject.SetActive (false);
 
         kineButtons.SetActive (b);
         patientButtons.SetActive (false);
