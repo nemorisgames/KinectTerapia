@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public int currentLevel = 1;
     [HideInInspector]
     public int currentScore = 0;
+    public UILabel descriptionLabel;
     public UILabel scoreLabel;
     public UILabel levelLabel;
     public UILabel finalScoreLabel;
@@ -20,16 +21,18 @@ public class GameManager : MonoBehaviour
     public UILabel loseScore;
     private PositionTransformator config;
     private AudioSource audioSource;
-    public AudioClip winSound, loseSound;
+    public AudioClip instructionLeft, instructionRight;
+    public AudioClip[] winLevelSound, loseLevelSound, winGameSound;
 
-    void Awake()
+    void Awake ()
     {
-        config = GameObject.FindObjectOfType<PositionTransformator>();
-        audioSource = GetComponent<AudioSource>();
+        config = GameObject.FindObjectOfType<PositionTransformator> ();
+        audioSource = GetComponent<AudioSource> ();
     }
     // Use this for initialization
-    void Start()
+    void Start ()
     {
+        Random.InitState (System.DateTime.Now.Second * System.DateTime.Now.Minute);
         if (instance == null)
         {
             instance = this;
@@ -38,105 +41,115 @@ public class GameManager : MonoBehaviour
         {
             if (instance != null)
             {
-                Destroy(gameObject);
+                Destroy (gameObject);
             }
         }
         Time.timeScale = 0f;
         if (loseScore == null)
-            loseScore = youLoseScreen.transform.Find("Subtitle").GetComponent<UILabel>();
+            loseScore = youLoseScreen.transform.Find ("Subtitle").GetComponent<UILabel> ();
 
         if (config != null)
         {
             // = PlayerPrefs.GetInt("handSelected"),
-            config.horLimits.x = PlayerPrefs.GetFloat("limitHorMin");
-            config.horLimits.y = PlayerPrefs.GetFloat("limitHorMax");
-            config.verLimits.x = PlayerPrefs.GetFloat("limitVerMin");
-            config.verLimits.y = PlayerPrefs.GetFloat("limitVerMax");
-            config.depthLimits.x = PlayerPrefs.GetFloat("limitDepthMin");
-            config.depthLimits.y = PlayerPrefs.GetFloat("limitDepthMax");
+            config.horLimits.x = PlayerPrefs.GetFloat ("limitHorMin");
+            config.horLimits.y = PlayerPrefs.GetFloat ("limitHorMax");
+            config.verLimits.x = PlayerPrefs.GetFloat ("limitVerMin");
+            config.verLimits.y = PlayerPrefs.GetFloat ("limitVerMax");
+            config.depthLimits.x = PlayerPrefs.GetFloat ("limitDepthMin");
+            config.depthLimits.y = PlayerPrefs.GetFloat ("limitDepthMax");
         }
+
+        int handSelected = PlayerPrefs.GetInt ("handSelected", 1);
+        descriptionLabel.text = descriptionLabel.text.Replace ("@", (handSelected == 1 ? "derecho" : "izquierdo"));
+        PlayAudio ((handSelected == 1 ? instructionRight : instructionLeft));
     }
 
-    public void AddToScore(int points)
+    public void AddToScore (int points)
     {
         currentScore += points;
         scoreLabel.text = "" + currentScore;
     }
 
-    public void SubstractFromScore(int points)
+    public void SubstractFromScore (int points)
     {
         currentScore -= points;
         scoreLabel.text = "" + currentScore;
     }
 
-    public void SetScore(int points)
+    public void SetScore (int points)
     {
         currentScore = points;
         scoreLabel.text = "" + currentScore;
     }
 
-    public void ButtonPlay()
+    public void ButtonPlay ()
     {
         Time.timeScale = 1f;
-        beginScreen.PlayForward();
+        beginScreen.PlayForward ();
     }
 
-    public void ButtonNextLevel()
+    public void ButtonNextLevel ()
     {
         Time.timeScale = 1f;
-        nextLevelScreen.PlayReverse();
+        nextLevelScreen.PlayReverse ();
     }
 
-    public void FinishLevel()
+    AudioClip GetRandomAudio (AudioClip[] audios)
     {
-        PlayAudio(winSound);
+        return audios[Random.Range (0, audios.Length - 1)];
+    }
+
+    public void FinishLevel ()
+    {
         Time.timeScale = 0f;
         currentLevel++;
         if (currentLevel > 3)
         {
             finalScoreLabel.text = "Puntaje: " + currentScore;
-            youWinScreen.PlayForward();
-            SaveHeatmap();
+            youWinScreen.PlayForward ();
+            SaveHeatmap ();
+            PlayAudio (GetRandomAudio (winGameSound));
         }
         else
         {
-            nextLevelScreen.PlayForward();
+            nextLevelScreen.PlayForward ();
             levelLabel.text = "Nivel " + currentLevel;
+            PlayAudio (GetRandomAudio (winLevelSound));
         }
 
     }
 
-    public void LevelFailed()
+    public void LevelFailed ()
     {
-        PlayAudio(loseSound);
+        PlayAudio (GetRandomAudio (loseLevelSound));
         Time.timeScale = 0f;
-        youLoseScreen.PlayForward();
+        youLoseScreen.PlayForward ();
         if (loseScore != null)
             loseScore.text = "Puntaje: \n" + currentScore;
-        SaveHeatmap();
+        SaveHeatmap ();
 
     }
 
-    void SaveHeatmap()
+    void SaveHeatmap ()
     {
         if (HandPosition.Instance == null)
             return;
-        HandPosition.Instance.SavePoints();
+        HandPosition.Instance.SavePoints ();
     }
 
-    public void PlayAgain()
+    public void PlayAgain ()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
     }
 
-    public void Exit()
+    public void Exit ()
     {
-        DatabaseManager.instance.SaveSession(SceneManager.GetActiveScene().name, currentScore, 1, 1);
-        SceneManager.LoadScene("GameGrid");
+        DatabaseManager.instance.SaveSession (SceneManager.GetActiveScene ().name, currentScore, 1, 1);
+        SceneManager.LoadScene ("GameGrid");
     }
 
     // Update is called once per frame
-    void Update()
+    void Update ()
     {
 
         /* 
@@ -148,9 +161,9 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void PlayAudio(AudioClip clip)
+    public void PlayAudio (AudioClip clip)
     {
         if (clip != null && audioSource != null)
-            audioSource.PlayOneShot(clip);
+            audioSource.PlayOneShot (clip);
     }
 }

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class AstraManager : MonoBehaviour
 {
     public static AstraManager instance = null;
-
     nuitrack.JointType[] typeJoint;
     GameObject[] CreatedJoint;
     public GameObject objectToMove;
@@ -18,8 +16,9 @@ public class AstraManager : MonoBehaviour
     public float scaleZ = 0.001f;
     private nuitrack.JointType torsoJoint, shoulderJoint, elbowJoint;
     public bool useTorsoRef = true;
+    public Vector3 offset = Vector3.zero;
 
-    void Start()
+    void Start ()
     {
         if (instance == null)
         {
@@ -29,19 +28,19 @@ public class AstraManager : MonoBehaviour
         {
             if (instance != null)
             {
-                Destroy(gameObject);
+                Destroy (gameObject);
             }
         }
         torsoJoint = nuitrack.JointType.Torso;
         shoulderJoint = nuitrack.JointType.None;
         elbowJoint = nuitrack.JointType.None;
-        SetHand();
-        resetObjectToMove();
+        SetHand ();
+        resetObjectToMove ();
     }
 
-    public void SetHand()
+    public void SetHand ()
     {
-        if (PlayerPrefs.GetInt("handSelected", 1) == 1)
+        if (PlayerPrefs.GetInt ("handSelected", 1) == 1)
         {
             typeJoint = new nuitrack.JointType[1];
             typeJoint[0] = nuitrack.JointType.RightHand;
@@ -50,7 +49,7 @@ public class AstraManager : MonoBehaviour
         }
         else
         {
-            if (PlayerPrefs.GetInt("handSelected", 1) == -1)
+            if (PlayerPrefs.GetInt ("handSelected", 1) == -1)
             {
                 typeJoint = new nuitrack.JointType[1];
                 typeJoint[0] = nuitrack.JointType.LeftHand;
@@ -66,7 +65,7 @@ public class AstraManager : MonoBehaviour
         }
     }
 
-    public void resetObjectToMove()
+    public void resetObjectToMove ()
     {
         CreatedJoint = new GameObject[typeJoint.Length];
         for (int q = 0; q < typeJoint.Length; q++)
@@ -76,7 +75,7 @@ public class AstraManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void Update ()
     {
         if (CurrentUserTracker.CurrentUser != 0)
         {
@@ -84,20 +83,20 @@ public class AstraManager : MonoBehaviour
             //Vector3 sh = (shoulderJoint != nuitrack.JointType.None ? skeleton.GetJoint(shoulderJoint).ToVector3() : Vector3.zero);
             Vector3 reference = Vector3.zero;
             if (shoulderJoint != nuitrack.JointType.None)
-                reference.x = skeleton.GetJoint(shoulderJoint).ToVector3().x;
+                reference.x = skeleton.GetJoint (shoulderJoint).ToVector3 ().x;
             if (shoulderJoint != nuitrack.JointType.None)
-                reference.y = skeleton.GetJoint(elbowJoint).ToVector3().y;
-            reference.z = skeleton.GetJoint(torsoJoint).ToVector3().z;
+                reference.y = skeleton.GetJoint (elbowJoint).ToVector3 ().y;
+            reference.z = skeleton.GetJoint (torsoJoint).ToVector3 ().z;
 
             for (int q = 0; q < typeJoint.Length; q++)
             {
-                nuitrack.Joint joint = skeleton.GetJoint(typeJoint[q]);
-                float componentX = -scaleX * (joint.ToVector3().x - reference.x) * (lockMovX ? 0f : 1f);
-                float componentY = scaleY * (joint.ToVector3().y - reference.y) * (lockMovY ? 0f : 1f);
-                float componentZ = scaleZ * (useTorsoRef ? reference.z - joint.ToVector3().z : joint.ToVector3().z) * (lockMovZ ? 0f : 1f);
-                Vector3 newPosition = new Vector3(componentX, componentY, componentZ);
+                nuitrack.Joint joint = skeleton.GetJoint (typeJoint[q]);
+                float componentX = -scaleX * (joint.ToVector3 ().x - reference.x) * (lockMovX ? 0f : 1f);
+                float componentY = scaleY * (joint.ToVector3 ().y - reference.y) * (lockMovY ? 0f : 1f);
+                float componentZ = scaleZ * (useTorsoRef ? reference.z - joint.ToVector3 ().z : joint.ToVector3 ().z) * (lockMovZ ? 0f : 1f);
+                Vector3 newPosition = new Vector3 (componentX, componentY, componentZ);
 
-                CreatedJoint[q].transform.localPosition = newPosition;
+                CreatedJoint[q].transform.localPosition = newPosition + offset;
             }
 
         }
