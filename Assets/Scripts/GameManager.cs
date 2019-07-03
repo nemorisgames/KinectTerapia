@@ -60,7 +60,9 @@ public class GameManager : MonoBehaviour
         }
 
         int handSelected = PlayerPrefs.GetInt ("handSelected", 1);
-        descriptionLabel.text = descriptionLabel.text.Replace ("@", (handSelected == 1 ? "derecho" : "izquierdo"));
+        descriptionLabel.text = descriptionLabel.text.Replace ("@", (handSelected == 1 ?
+            (SceneManager.GetActiveScene ().name.Trim () != "Game8" ? "derecho" : "derecha") :
+            (SceneManager.GetActiveScene ().name.Trim () != "Game8" ? "izquierdo" : "izquierda")));
         PlayAudio ((handSelected == 1 ? instructionRight : instructionLeft));
     }
 
