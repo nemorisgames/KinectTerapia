@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip instructionLeft, instructionRight;
     public AudioClip[] winLevelSound, loseLevelSound, winGameSound;
+    private bool gameStarted = false;
 
     void Awake ()
     {
@@ -88,6 +89,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         beginScreen.PlayForward ();
+        gameStarted = true;
     }
 
     public void ButtonNextLevel ()
@@ -109,8 +111,9 @@ public class GameManager : MonoBehaviour
         {
             finalScoreLabel.text = "Puntaje: " + currentScore;
             youWinScreen.PlayForward ();
-            SaveHeatmap ();
+            SaveSession ();
             PlayAudio (GetRandomAudio (winGameSound));
+
         }
         else
         {
@@ -128,15 +131,21 @@ public class GameManager : MonoBehaviour
         youLoseScreen.PlayForward ();
         if (loseScore != null)
             loseScore.text = "Puntaje: \n" + currentScore;
-        SaveHeatmap ();
+        SaveSession ();
 
     }
 
-    void SaveHeatmap ()
+    void SaveSession ()
     {
-        if (HandPosition.Instance == null)
-            return;
-        HandPosition.Instance.SavePoints ();
+        string s = "";
+        float vMax = 0, vMean = 0;
+        if (HandPosition.Instance != null)
+        {
+            s = HandPosition.Instance.SavePoints ();
+            vMean = HandPosition.Instance.MeanVel ();
+            vMax = HandPosition.Instance.MaxVel ();
+        }
+        DatabaseManager.instance.SaveSession (currentScore, vMean, vMax, s);
     }
 
     public void PlayAgain ()
@@ -146,20 +155,11 @@ public class GameManager : MonoBehaviour
 
     public void Exit ()
     {
-        DatabaseManager.instance.SaveSession (SceneManager.GetActiveScene ().name, currentScore, 1, 1);
         SceneManager.LoadScene ("GameGrid");
     }
 
-    // Update is called once per frame
     void Update ()
     {
-
-        /* 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            LevelFailed();
-        }
-        */
 
     }
 

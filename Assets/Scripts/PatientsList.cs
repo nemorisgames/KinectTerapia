@@ -11,6 +11,7 @@ public class PatientsList : MonoBehaviour
     public Transform scrollPatientsPanel;
     public Transform scrollResultsPanel;
     public Transform scrollDetailsPanel;
+    public LoadHeatmap heatmap;
     ArrayList patientsInKinesiologist;
     ArrayList patientsResults;
     ArrayList patientsDetails;
@@ -44,6 +45,7 @@ public class PatientsList : MonoBehaviour
         scrollPatientsPanel.transform.parent.gameObject.SetActive (false);
         scrollResultsPanel.transform.parent.gameObject.SetActive (true);
         scrollDetailsPanel.transform.parent.gameObject.SetActive (false);
+        heatmap.transform.gameObject.SetActive (false);
 
         PlayerPrefs.SetInt ("pk_patient", pk_patient);
         ArrayList PatientResults = new ArrayList ();
@@ -64,11 +66,23 @@ public class PatientsList : MonoBehaviour
         }
     }
 
+    public void CheckHeatmap (string s)
+    {
+        heatmap.transform.gameObject.SetActive (true);
+        heatmap.LoadImage (s);
+    }
+
+    public void CloseHeatmap ()
+    {
+        heatmap.transform.gameObject.SetActive (false);
+    }
+
     public void CheckDetails (int pk_patient, int pk_game)
     {
         scrollPatientsPanel.transform.parent.gameObject.SetActive (false);
         scrollResultsPanel.transform.parent.gameObject.SetActive (false);
         scrollDetailsPanel.transform.parent.gameObject.SetActive (true);
+        heatmap.transform.gameObject.SetActive (false);
 
         List<TablePatientsDetails> tableDetails = DatabaseManager.instance.GetDetailsOnPatient (pk_patient, pk_game);
         int cont = 0;
@@ -82,7 +96,7 @@ public class PatientsList : MonoBehaviour
             string hand = "Ambas";
             if (t.hand == -1) hand = "Izquierda";
             else hand = "Derecha";
-            p.SetInformation (t.pk_session, t.dateSession, t.score, hand, t.speedMin, t.speedMax);
+            p.SetInformation (t, hand);
             print ("pk_session " + t.pk_session);
             print ("dateSession " + t.dateSession);
             patientsDetails.Add (p);
@@ -100,6 +114,7 @@ public class PatientsList : MonoBehaviour
         scrollPatientsPanel.transform.parent.gameObject.SetActive (true);
         scrollResultsPanel.transform.parent.gameObject.SetActive (false);
         scrollDetailsPanel.transform.parent.gameObject.SetActive (false);
+        heatmap.transform.gameObject.SetActive (false);
 
         foreach (PatientResults p in patientsResults)
         {
@@ -113,6 +128,7 @@ public class PatientsList : MonoBehaviour
         scrollPatientsPanel.transform.parent.gameObject.SetActive (false);
         scrollResultsPanel.transform.parent.gameObject.SetActive (true);
         scrollDetailsPanel.transform.parent.gameObject.SetActive (false);
+        heatmap.transform.gameObject.SetActive (false);
 
         foreach (PatientDetails p in patientsDetails)
         {

@@ -242,24 +242,20 @@ public class DatabaseManager : MonoBehaviour
         return pk_admin;
     }
 
-    public void SaveSession (string game, int score, float speedMin, float speedMax)
+    public void SaveSession (int score, float _speedMean, float _speedMax, string heatmap)
     {
-        int currentGame = int.Parse (game.Substring (4, 1));
-        int currentConfiguration = PlayerPrefs.GetInt ("currentConfiguration", 1);
+        Debug.Log ("VMax: " + _speedMax);
         DBConnection.Insert (new TableSession
         {
-            fk_configuration = currentConfiguration,
-                fk_game = currentGame,
+            fk_configuration = PlayerPrefs.GetInt ("currentConfiguration", 1),
+                fk_game = PlayerPrefs.GetInt ("pk_game"),
                 fk_patient = PlayerPrefs.GetInt ("pk_patient"),
                 score = score,
                 dateSession = System.DateTime.Now.ToString (),
-                speedMin = speedMin,
-                speedMax = speedMax,
-                heatMap = "image.png"
+                speedMin = _speedMean,
+                speedMax = _speedMax,
+                heatMap = heatmap
         });
-        /*List<TableSession> ts = DBConnection.Query<TableSession>("select * from TableSession");
-        foreach(TableSession t in ts)
-            Debug.Log(t.pk_session + " | " + t.fk_game+ " | "+t.score);*/
     }
 
     public void SaveConfiguration ()
@@ -415,7 +411,8 @@ public class DatabaseManager : MonoBehaviour
             tpr.dateSession = ts.dateSession;
             tpr.hand = config[0].hand;
             tpr.score = ts.score;
-            tpr.speedMin = ts.speedMax;
+            tpr.speedMin = ts.speedMin;
+            tpr.speedMax = ts.speedMax;
             tpr.heatmap = ts.heatMap;
             tableDetails.Add (tpr);
         }
