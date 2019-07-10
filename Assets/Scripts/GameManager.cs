@@ -24,10 +24,12 @@ public class GameManager : MonoBehaviour
     public AudioClip instructionLeft, instructionRight;
     public AudioClip[] winLevelSound, loseLevelSound, winGameSound;
     private bool gameStarted = false;
+    private AstraManager astraManager;
 
     void Awake ()
     {
         config = GameObject.FindObjectOfType<PositionTransformator> ();
+        astraManager = GameObject.FindObjectOfType<AstraManager> ();
         audioSource = GetComponent<AudioSource> ();
     }
     // Use this for initialization
@@ -49,15 +51,25 @@ public class GameManager : MonoBehaviour
         if (loseScore == null)
             loseScore = youLoseScreen.transform.Find ("Subtitle").GetComponent<UILabel> ();
 
-        if (config != null)
+        if (config != null && astraManager != null)
         {
             // = PlayerPrefs.GetInt("handSelected"),
-            config.horLimits.x = PlayerPrefs.GetFloat ("limitHorMin");
-            config.horLimits.y = PlayerPrefs.GetFloat ("limitHorMax");
-            config.verLimits.x = PlayerPrefs.GetFloat ("limitVerMin");
-            config.verLimits.y = PlayerPrefs.GetFloat ("limitVerMax");
-            config.depthLimits.x = PlayerPrefs.GetFloat ("limitDepthMin");
-            config.depthLimits.y = PlayerPrefs.GetFloat ("limitDepthMax");
+            if (!astraManager.lockMovX)
+            {
+                config.horLimits.x = PlayerPrefs.GetFloat ("limitHorMin");
+                config.horLimits.y = PlayerPrefs.GetFloat ("limitHorMax");
+            }
+            if (!astraManager.lockMovY)
+            {
+                config.verLimits.x = PlayerPrefs.GetFloat ("limitVerMin");
+                config.verLimits.y = PlayerPrefs.GetFloat ("limitVerMax");
+            }
+
+            if (!astraManager.lockMovZ)
+            {
+                config.depthLimits.x = PlayerPrefs.GetFloat ("limitDepthMin");
+                config.depthLimits.y = PlayerPrefs.GetFloat ("limitDepthMax");
+            }
         }
 
         int handSelected = PlayerPrefs.GetInt ("handSelected", 1);
