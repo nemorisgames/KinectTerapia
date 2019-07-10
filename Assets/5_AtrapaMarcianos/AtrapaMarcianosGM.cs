@@ -109,7 +109,7 @@ public class AtrapaMarcianosGM : MonoBehaviour
         foreach (float f in posiciones)
         {
             GameObject g = (GameObject) Instantiate (alienPrefab, new Vector3 (f, -8.5f, enemyPosZ), alienPrefab.transform.rotation);
-            EventDelegate.Add (g.GetComponent<TweenPosition> ().onFinished, () => GameManager.instance.PlayAudio (alienSound));
+            EventDelegate.Add (g.GetComponent<TweenPosition> ().onFinished, () => GameManager.instance.PlayAudio (alienSound, 0.9f));
             aliens.Add (g.GetComponent<TweenPosition> ());
         }
         foreach (TweenPosition alien in aliens)
@@ -179,7 +179,10 @@ public class AtrapaMarcianosGM : MonoBehaviour
     {
         yield return new WaitForSeconds (alienSpeed);
         foreach (Transform t in hand.transform)
-            Destroy (t.gameObject);
+        {
+            if (t.tag == "CPU")
+                Destroy (t.gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -349,8 +352,8 @@ public class AtrapaMarcianosGM : MonoBehaviour
         aliens[position] = g.GetComponent<TweenPosition> ();
         aliens[position].to.x = f;
         aliens[position].from.x = f;
-        trappedAlien = TrappedAlien ();
-        StartCoroutine (trappedAlien);
+        //trappedAlien = TrappedAlien ();
+        //StartCoroutine (trappedAlien);
     }
 
     delegate void AlienAudio ();

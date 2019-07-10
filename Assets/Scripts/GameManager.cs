@@ -175,9 +175,9 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void PlayAudio (AudioClip clip)
+    public void PlayAudio (AudioClip clip, float f = 1.5f)
     {
         if (clip != null && audioSource != null)
-            audioSource.PlayOneShot (clip, 1.5f);
+            audioSource.PlayOneShot (clip, f);
     }
 }
