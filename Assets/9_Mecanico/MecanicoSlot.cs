@@ -55,16 +55,16 @@ public class MecanicoSlot : MonoBehaviour {
                 rend.material.SetColor("_EmissionColor", new Color(0.1f, 0.1f, 1f) * 2f);
                 break;
             case MecanicoGM.PartType.Part3:
-                rend.material.SetColor("_Color", new Color(0.3f, 1f, 1f, 0.3f));
-                rend.material.SetColor("_EmissionColor", new Color(0.1f, 1f, 1f) * 2f);
+                rend.material.SetColor("_Color", new Color(1f, 1f, 0.3f, 0.3f));
+                rend.material.SetColor("_EmissionColor", new Color(1f, 1f, 0.1f) * 2f);
                 break;
             case MecanicoGM.PartType.Part4:
                 rend.material.SetColor("_Color", new Color(0.3f, 1f, 0.3f, 0.3f));
                 rend.material.SetColor("_EmissionColor", new Color(0.1f, 1f, 0.1f) * 2f);
                 break;
             case MecanicoGM.PartType.Part5:
-                rend.material.SetColor("_Color", new Color(1f, 1f, 0.3f, 0.3f));
-                rend.material.SetColor("_EmissionColor", new Color(1f, 1f, 0.1f) * 2f);
+                rend.material.SetColor("_Color", new Color(0.3f, 1f, 1f, 0.3f));
+                rend.material.SetColor("_EmissionColor", new Color(0.1f, 1f, 1f) * 2f);
                 break;
         }
     }
