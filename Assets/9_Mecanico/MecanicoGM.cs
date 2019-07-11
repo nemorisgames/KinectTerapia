@@ -32,17 +32,19 @@ public class MecanicoGM : MonoBehaviour
 	public int correct = 0;
 	private int score;
 	List<MecanicoPieza> spawnedParts = new List<MecanicoPieza> ();
+	private PositionTransformator positionTransformator;
 
 	void Awake ()
 	{
 		if (Instance == null)
 			Instance = this;
 		Random.InitState (System.DateTime.Now.Second * System.DateTime.Now.Minute);
+		positionTransformator = GameObject.FindObjectOfType<PositionTransformator> ();
 	}
 
 	void Start ()
 	{
-		Init ();
+
 	}
 
 	void EnableSlots (int slot)
@@ -101,9 +103,10 @@ public class MecanicoGM : MonoBehaviour
 			GameObject g = (GameObject) Instantiate (partPrefab, partPrefab.transform.position, partPrefab.transform.rotation);
 			MecanicoPieza p = g.GetComponent<MecanicoPieza> ();
 			spawnedParts.Add (p);
-			Vector3 randPos = new Vector3 (Random.Range (2f, 6f) * Mathf.Sign (Random.Range (-1, 1)), Random.Range (1f, 2f) * Mathf.Sign (Random.Range (-1, 1)), Random.Range (-1f, 4f));
-			while (!CheckPos (randPos, 2f))
-				randPos = new Vector3 (Random.Range (2f, 6f) * Mathf.Sign (Random.Range (-1, 1)), Random.Range (1f, 2f) * Mathf.Sign (Random.Range (-1, 1)), Random.Range (-1f, 4f));
+
+			Vector3 randPos = randomPosition ();
+			while (!CheckPos (randPos, 1.25f))
+				randPos = randomPosition ();
 			g.transform.position = randPos;
 			if (i < numSlots)
 				p.type = (PartType) (i + 1);
@@ -111,6 +114,25 @@ public class MecanicoGM : MonoBehaviour
 				p.type = PartType.None;
 			p.initPos = g.transform.position;
 		}
+	}
+
+	Vector3 randomPosition ()
+	{
+		Vector3 r = new Vector3 ();
+		r.x = Random.Range (positionTransformator.horLimits.x, positionTransformator.horLimits.y);
+		while (Mathf.Abs (r.x) < 1.5f)
+		{
+			r.x = Random.Range (positionTransformator.horLimits.x, positionTransformator.horLimits.y);
+		}
+
+		r.y = Random.Range (positionTransformator.verLimits.x, positionTransformator.verLimits.y);
+		if (Mathf.Abs (r.y) < 1.5f)
+		{
+			r.y = Random.Range (positionTransformator.verLimits.x, positionTransformator.verLimits.y);
+		}
+
+		r.z = Random.Range (-1, 4);
+		return r;
 	}
 
 	bool CheckPos (Vector3 newPos, float margen)
