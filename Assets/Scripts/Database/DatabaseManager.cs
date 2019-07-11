@@ -2,9 +2,9 @@
 using UnityEngine;
 #if !UNITY_EDITOR
 using System.Collections;
-using System.IO;
 #endif
 using System.Collections.Generic;
+using System.IO;
 
 //A complete example of how to work with SQLLite is in the project SQLite4Unity3d-master
 //Source: https://github.com/robertohuertasm/SQLite4Unity3d
@@ -39,25 +39,27 @@ public class DatabaseManager : MonoBehaviour
     public void DataService (string DatabaseName)
     {
         var dbPath = string.Format (Application.persistentDataPath + "/{0}", DatabaseName);
-        //var dbPath = string.Format(Application.dataPath + "/Resources" + "/{0}", DatabaseName);
-        try
+        if (File.Exists (dbPath))
         {
-            //Try to open de database. If it does not exists, it sends an error
-            DBConnection = new SQLiteConnection (dbPath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
-            /*var admin = GetAdmin();
-            foreach (var a in admin)
+            try
             {
-                print(a.pk_admin + " " + a.username);
-            }*/
+                DBConnection = new SQLiteConnection (dbPath, SQLiteOpenFlags.ReadWrite);
+            }
+            catch (SQLiteException s)
+            {
+                CreateDB (DatabaseName);
+            }
         }
-        catch (SQLiteException s)
+        else
         {
             CreateDB (DatabaseName);
         }
+
     }
 
     public void CreateDB (string DatabaseName)
     {
+        //Debug.Log ("Create db");
         //Application.persistentDataPath
         //DBConnection = new SQLiteConnection(string.Format(Application.dataPath + "/Resources" + "/{0}", DatabaseName), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
         DBConnection = new SQLiteConnection (string.Format (Application.persistentDataPath + "/{0}", DatabaseName), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
@@ -228,8 +230,12 @@ public class DatabaseManager : MonoBehaviour
     {
         int pk_kinesiologist = -1;
         var k = DBConnection.Table<TableKinesiologist> ().Where (x => x.username == username && x.password == password);
-        if (k.Count () > 0)
+        if (k != null && k.Count () > 0)
             pk_kinesiologist = k.First ().pk_kinesiologist;
+        else
+        {
+            pk_kinesiologist = -1;
+        }
         return pk_kinesiologist;
     }
 
