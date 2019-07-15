@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
         config = GameObject.FindObjectOfType<PositionTransformator> ();
         astraManager = GameObject.FindObjectOfType<AstraManager> ();
         audioSource = GetComponent<AudioSource> ();
+        Time.timeScale = 1f;
     }
     // Use this for initialization
     void Start ()
@@ -76,7 +77,10 @@ public class GameManager : MonoBehaviour
         descriptionLabel.text = descriptionLabel.text.Replace ("@", (handSelected == 1 ?
             (SceneManager.GetActiveScene ().name.Trim () != "Game8" ? "derecho" : "derecha") :
             (SceneManager.GetActiveScene ().name.Trim () != "Game8" ? "izquierdo" : "izquierda")));
-        PlayAudio ((handSelected == 1 ? instructionRight : instructionLeft));
+        GameObject g = GameObject.Find("UI Root");
+        if (g == null) g = GameObject.Find("UI Root + GameManager");
+        g.transform.Find("Camera").GetComponent<AudioSource>().Stop();
+        PlayAudio ((handSelected == 1 ? instructionRight : instructionLeft), 3f);
     }
 
     public void AddToScore (int points)
@@ -99,6 +103,9 @@ public class GameManager : MonoBehaviour
 
     public void ButtonPlay ()
     {
+        GameObject g = GameObject.Find("UI Root");
+        if (g == null) g = GameObject.Find("UI Root + GameManager");
+        g.transform.Find("Camera").GetComponent<AudioSource>().Play();
         Time.timeScale = 1f;
         beginScreen.PlayForward ();
         gameStarted = true;
@@ -131,14 +138,14 @@ public class GameManager : MonoBehaviour
         {
             nextLevelScreen.PlayForward ();
             levelLabel.text = "Nivel " + currentLevel;
-            PlayAudio (GetRandomAudio (winLevelSound));
+            PlayAudio (GetRandomAudio (winLevelSound), 3f);
         }
 
     }
 
     public void LevelFailed ()
     {
-        PlayAudio (GetRandomAudio (loseLevelSound));
+        PlayAudio (GetRandomAudio (loseLevelSound), 3f);
         Time.timeScale = 0f;
         youLoseScreen.PlayForward ();
         if (loseScore != null)
@@ -172,10 +179,13 @@ public class GameManager : MonoBehaviour
 
     void Update ()
     {
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Time.timeScale = (Time.timeScale <= 0f)?1f:0f;
+        }
     }
 
-    public void PlayAudio (AudioClip clip, float f = 1.5f)
+    public void PlayAudio (AudioClip clip, float f = 0.5f)
     {
         if (clip != null && audioSource != null)
             audioSource.PlayOneShot (clip, f);

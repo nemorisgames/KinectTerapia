@@ -84,6 +84,7 @@ public class CortaCubo : MonoBehaviour
         right.AddRelativeForce(breakForce, 0, -breakForce / 2, ForceMode.Impulse);
         left.useGravity = true;
         right.useGravity = true;
+        transform.Find("Quad").gameObject.SetActive(false);
         GameManager.instance.AddToScore(CortaCubosGM.Instance.puntaje);
         StartCoroutine(DeletThis(1.5f));
     }
