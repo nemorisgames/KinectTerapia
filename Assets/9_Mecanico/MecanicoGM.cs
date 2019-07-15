@@ -98,7 +98,7 @@ public class MecanicoGM : MonoBehaviour
 			partSlots[i].type = (PartType)(i+1);
 		}*/
 		spawnedParts.Clear ();
-		for (int i = 0; i < numParts; i++)
+		for (int i = 0; i < numSlots; i++)
 		{
 			GameObject g = (GameObject) Instantiate (partPrefab, partPrefab.transform.position, partPrefab.transform.rotation);
 			MecanicoPieza p = g.GetComponent<MecanicoPieza> ();
@@ -119,16 +119,16 @@ public class MecanicoGM : MonoBehaviour
 	Vector3 randomPosition ()
 	{
 		Vector3 r = new Vector3 ();
-		r.x = Random.Range (positionTransformator.horLimits.x, positionTransformator.horLimits.y);
+		r.x = Random.Range (Mathf.Max(positionTransformator.horLimits.x,-4f), Mathf.Min(positionTransformator.horLimits.y,4f));
 		while (Mathf.Abs (r.x) < 1.5f)
 		{
-			r.x = Random.Range (positionTransformator.horLimits.x, positionTransformator.horLimits.y);
+			r.x = Random.Range (Mathf.Max(positionTransformator.horLimits.x,-4f), Mathf.Min(positionTransformator.horLimits.y,4f));
 		}
 
-		r.y = Random.Range (positionTransformator.verLimits.x, positionTransformator.verLimits.y);
+		r.y = Random.Range (Mathf.Max(positionTransformator.verLimits.x,-3f), Mathf.Min(positionTransformator.verLimits.y,3f));
 		if (Mathf.Abs (r.y) < 1.5f)
 		{
-			r.y = Random.Range (positionTransformator.verLimits.x, positionTransformator.verLimits.y);
+			r.y = Random.Range (Mathf.Max(positionTransformator.verLimits.x,-3f), Mathf.Min(positionTransformator.verLimits.y,3f));
 		}
 
 		r.z = Random.Range (-1, 4);
