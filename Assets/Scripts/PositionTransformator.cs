@@ -21,6 +21,7 @@ public class PositionTransformator : MonoBehaviour
     private Vector3 positionInit;
     public bool forcePosition = true;
     public bool localPosition = false;
+    private NuitrackManager nuitrackManager;
 
     void Awake ()
     {
@@ -29,6 +30,7 @@ public class PositionTransformator : MonoBehaviour
             Destroy (Instance);
         }
         Instance = this;
+        nuitrackManager = GameObject.FindObjectOfType<NuitrackManager>();
     }
 
     void Start ()
@@ -57,6 +59,8 @@ public class PositionTransformator : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        if(!nuitrackManager.enabled)
+            return;
         //porcentaje de posicion con respecto a lo almacenado
         float percentageLimitHor = ((referenceObject.position.x - PlayerPrefs.GetFloat ("limitHorMin")) / horDifferenceConfig);
         float positionHorReal = (percentageLimitHor * horDifference + horLimits[0]);

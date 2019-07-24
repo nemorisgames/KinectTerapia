@@ -33,6 +33,7 @@ public class MecanicoGM : MonoBehaviour
 	private int score;
 	List<MecanicoPieza> spawnedParts = new List<MecanicoPieza> ();
 	private PositionTransformator positionTransformator;
+	public float randomDistance = 0.75f;
 
 	void Awake ()
 	{
@@ -105,8 +106,11 @@ public class MecanicoGM : MonoBehaviour
 			spawnedParts.Add (p);
 
 			Vector3 randPos = randomPosition ();
-			while (!CheckPos (randPos, 1.25f))
+			int iter = 0;
+			while (iter < 20 && !CheckPos (randPos, randomDistance)){
 				randPos = randomPosition ();
+				iter++;
+			}
 			g.transform.position = randPos;
 			if (i < numSlots)
 				p.type = (PartType) (i + 1);
@@ -119,19 +123,17 @@ public class MecanicoGM : MonoBehaviour
 	Vector3 randomPosition ()
 	{
 		Vector3 r = new Vector3 ();
-		r.x = Random.Range (Mathf.Max(positionTransformator.horLimits.x,-4f), Mathf.Min(positionTransformator.horLimits.y,4f));
-		while (Mathf.Abs (r.x) < 1.5f)
-		{
-			r.x = Random.Range (Mathf.Max(positionTransformator.horLimits.x,-4f), Mathf.Min(positionTransformator.horLimits.y,4f));
-		}
+		float rx_left = Random.Range(Mathf.Max(positionTransformator.horLimits.x,-4f),-1.6f);
+		float rx_right = Random.Range(1.6f,Mathf.Min(positionTransformator.horLimits.y,4f));
+		r.x = (Random.Range(0,2) == 1 ? rx_left : rx_right);
+		if(Mathf.Abs(r.x) < 1.6f)
+			r.x = 1.6f * Mathf.Sign(r.x);
 
-		r.y = Random.Range (Mathf.Max(positionTransformator.verLimits.x,-3f), Mathf.Min(positionTransformator.verLimits.y,3f));
-		if (Mathf.Abs (r.y) < 1.5f)
-		{
-			r.y = Random.Range (Mathf.Max(positionTransformator.verLimits.x,-3f), Mathf.Min(positionTransformator.verLimits.y,3f));
-		}
+		float ry_down = Random.Range(Mathf.Min(Mathf.Max(positionTransformator.horLimits.x,-4f),-2.1f),-2f);
+		float ry_up = Random.Range(0,Mathf.Min(positionTransformator.horLimits.y,4f));
+		r.y = (Random.Range(0,2) == 1 ? ry_down : ry_up);
 
-		r.z = Random.Range (-1, 4);
+		r.z = Random.Range (-1.4f, 2.5f);
 		return r;
 	}
 
@@ -140,7 +142,6 @@ public class MecanicoGM : MonoBehaviour
 		foreach (MecanicoPieza p in spawnedParts)
 		{
 			float distance = Vector3.Distance (newPos, p.transform.position);
-			//Debug.Log(distance);
 			if (distance < margen)
 				return false;
 		}
