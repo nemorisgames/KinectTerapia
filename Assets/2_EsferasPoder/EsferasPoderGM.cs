@@ -21,6 +21,8 @@ public class EsferasPoderGM : MonoBehaviour
     IEnumerator next;
     public GameObject[] containers;
     public AudioClip esferaSound;
+    public UILabel esferasRestantes;
+    private Transform currentEsfera;
 
     void Awake()
     {
@@ -47,6 +49,7 @@ public class EsferasPoderGM : MonoBehaviour
         esferas = new List<GameObject>();
         spheresCaught = 0;
         sphereCount = 20;
+        esferasRestantes.text = "Esferas restantes: "+sphereCount;
         gameOver = false;
         random = new System.Random();
         switch (dificultad)
@@ -84,9 +87,11 @@ public class EsferasPoderGM : MonoBehaviour
         Vector3 pos = new Vector3(random.Next(-width, width), transform.position.y, transform.position.z);
         GameObject go = (GameObject)Instantiate(esferaPrefab, pos, Quaternion.identity, transform);
         esferas.Add(go);
-        yield return new WaitForSeconds(sphereTime);
+        currentEsfera = go.transform;
         sphereCount--;
-        if (sphereCount > 0 && spheresCaught + sphereCount > sphereTarget)
+        esferasRestantes.text = "Esferas restantes: "+sphereCount;
+        yield return new WaitForSeconds(sphereTime);
+        if (sphereCount > 0 && spheresCaught < sphereTarget)
         {
             next = nextSphere();
             StartCoroutine(next);
@@ -95,9 +100,6 @@ public class EsferasPoderGM : MonoBehaviour
         {
             if (next != null)
                 StopCoroutine(next);
-            gameOver = true;
-            //lose game
-            GameManager.instance.LevelFailed();
         }
     }
 
@@ -141,6 +143,17 @@ public class EsferasPoderGM : MonoBehaviour
                 dificultad = Dificultad.Nivel.dificil;
 
             GameManager.instance.FinishLevel();
+        }
+    }
+
+    void Update(){
+        if(currentEsfera != null && !gameOver){
+            if(currentEsfera.position.y < player.transform.position.y){
+                if(sphereCount <= 0){
+                    gameOver = true;
+                    GameManager.instance.LevelFailed();
+                }
+            }
         }
     }
 

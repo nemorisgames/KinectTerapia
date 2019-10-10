@@ -59,7 +59,7 @@ public class CortaCubo : MonoBehaviour
         if (transform.position.z < -9 && canBreak)
             canBreak = false;
 
-        if (transform.position.z <= 2f && canBreak && !broken)
+        if (transform.position.z <= 1.25f && canBreak && !broken)
         {
             CortaCubosGM.Instance.cubeInArea = true;
             CortaCubosGM.Instance.CortarCubo(this);

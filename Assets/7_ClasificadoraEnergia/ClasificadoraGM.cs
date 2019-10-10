@@ -25,6 +25,7 @@ public class ClasificadoraGM : MonoBehaviour
     private IEnumerator nextBall;
     private int fallos;
     private int score;
+    public UILabel debugLabel;
 
     void Awake()
     {
@@ -135,6 +136,7 @@ public class ClasificadoraGM : MonoBehaviour
         }
     }
 
+    private bool reset = false;
 
     void Update()
     {
@@ -150,17 +152,35 @@ public class ClasificadoraGM : MonoBehaviour
             moveRef.position = new Vector3(hPos, vPos, 0);
         }
 
-        if (moveRef.position.z <= 2f)
-            palancaSign = Mathf.Sign(moveRef.position.x);
+        
 
+        if (moveRef.position.z < 1.8f){
+            reset = false;
+            palancaSign = Mathf.Sign(moveRef.position.x);
+        }
+
+        debugLabel.text = palancaSign.ToString();
+            
         float palancaX = 0;
         float palancaZ = 0;
-        if (Mathf.Abs(moveRef.position.x) > 0.25f)
+         
+        if (moveRef.position.z > 1.8f)
         {
             palancaX = Mathf.Clamp(moveRef.position.z - 1, 0, 2.5f) * palancaSign;
             palancaZ = Mathf.Clamp(moveRef.position.z - 1, 0, 2.5f);
         }
+
+        if(reset){
+            if(palancaSign > 0)
+                palancaX = Mathf.Clamp(palancaX,0,palancaPos.x);
+            else
+                palancaX = Mathf.Clamp(palancaX,palancaPos.x,0);
+            palancaZ = Mathf.Clamp(palancaZ,0,palancaPos.z);
+        }
+
         palanca.position = new Vector3(palancaX, 0, palancaZ);
+        palancaPos = palanca.position;
+        //palanca.position = moveRef.position - Vector3.forward;
 
         moveRefLast = moveRef.position;
 
@@ -169,11 +189,12 @@ public class ClasificadoraGM : MonoBehaviour
 
         }
 
-        if (moveRef.position.z >= 2.5f && openDoor == 0)
+        if (moveRef.position.z > 2f && openDoor == 0)
         {
-            OpenDoor(palanca.position.x);
+            OpenDoor(moveRef.position.x);
+            reset = true;
         }
-        else if (moveRef.position.z <= 2f && openDoor != 0)
+        else if (moveRef.position.z < 1.8f && openDoor != 0)
         {
             OpenDoor();
         }

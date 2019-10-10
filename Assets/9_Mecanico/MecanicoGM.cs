@@ -129,11 +129,12 @@ public class MecanicoGM : MonoBehaviour
 		if(Mathf.Abs(r.x) < 1.6f)
 			r.x = 1.6f * Mathf.Sign(r.x);
 
-		float ry_down = Random.Range(Mathf.Min(Mathf.Max(positionTransformator.horLimits.x,-4f),-2.1f),-2f);
+		//float ry_down = Random.Range(Mathf.Min(Mathf.Max(positionTransformator.horLimits.x,-4f),-2.1f),-2f);
 		float ry_up = Random.Range(0,Mathf.Min(positionTransformator.horLimits.y,4f));
-		r.y = (Random.Range(0,2) == 1 ? ry_down : ry_up);
+		//r.y = (Random.Range(0,2) == 1 ? ry_down : ry_up);
+		r.y = ry_up;
 
-		r.z = Random.Range (-1.4f, 2.5f);
+		r.z = Random.Range (-1.8f, 0.2f);
 		return r;
 	}
 

@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public AudioClip[] winLevelSound, loseLevelSound, winGameSound;
     private bool gameStarted = false;
     private AstraManager astraManager;
+    private bool levelFinished = false;
 
     void Awake ()
     {
@@ -36,6 +37,7 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+        levelFinished = false;
         Random.InitState (System.DateTime.Now.Second * System.DateTime.Now.Minute);
         if (instance == null)
         {
@@ -109,12 +111,14 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         beginScreen.PlayForward ();
         gameStarted = true;
+        levelFinished = false;
     }
 
     public void ButtonNextLevel ()
     {
         Time.timeScale = 1f;
         nextLevelScreen.PlayReverse ();
+        levelFinished = false;
     }
 
     AudioClip GetRandomAudio (AudioClip[] audios)
@@ -124,6 +128,9 @@ public class GameManager : MonoBehaviour
 
     public void FinishLevel ()
     {
+        if(levelFinished)
+            return;
+        levelFinished = true;
         Time.timeScale = 0f;
         currentLevel++;
         if (currentLevel > 3)
@@ -145,6 +152,9 @@ public class GameManager : MonoBehaviour
 
     public void LevelFailed ()
     {
+        if(levelFinished)
+            return;
+        levelFinished = true;
         PlayAudio (GetRandomAudio (loseLevelSound), 3f);
         Time.timeScale = 0f;
         youLoseScreen.PlayForward ();
@@ -181,7 +191,8 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Time.timeScale = (Time.timeScale <= 0f)?1f:0f;
+            //Time.timeScale = (Time.timeScale <= 0f)?1f:0f;
+            Exit();
         }
     }
 

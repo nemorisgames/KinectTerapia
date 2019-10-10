@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    public Transform playerBar;
+    public int tries = 3;
+    public UILabel triesLabel;
     public float speed = 10f;
     public Vector3 direction;
     Rigidbody rigidbody;
@@ -17,6 +20,13 @@ public class Ball : MonoBehaviour
         initialDirection = direction;
         initialPosition = transform.position;
         rigidbody = GetComponent<Rigidbody>();
+        tries = 3;
+        triesLabel.text = "Intentos: "+tries;
+    }
+
+    public void resetTries(){
+        tries = 3;
+        triesLabel.text = "Intentos: "+tries;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -76,7 +86,16 @@ public class Ball : MonoBehaviour
         rigidbody.velocity = direction * speed * Time.deltaTime;
         if (transform.position.y < -2.5f)
         {
-            GameManager.instance.LevelFailed();
+            tries--;
+            triesLabel.text = "Intentos: "+tries;
+            if(tries <= 0){
+                GameManager.instance.LevelFailed();
+            }
+            else{
+                transform.position = new Vector3(playerBar.position.x,initialPosition.y,initialPosition.z);
+                direction = initialDirection;
+            }
+            
         }
     }
 }

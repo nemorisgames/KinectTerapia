@@ -10,6 +10,7 @@ public class RobotSphere : MonoBehaviour
     public float currentHeight = 0;
     private float lastHeight = 0;
     public AudioClip checkpointSound;
+    private int baseScore;
 
     void Awake ()
     {
@@ -50,7 +51,9 @@ public class RobotSphere : MonoBehaviour
             if (transform.position.y <= 0)
             {
                 launched = false;
-                RobotFuerteGM.Instance.LevelFailed ();
+                RobotFuerteGM.Instance.BallFall();
+                GameManager.instance.SetScore(baseScore);
+                Destroy(this.gameObject);
             }
         }
     }
@@ -58,6 +61,7 @@ public class RobotSphere : MonoBehaviour
     public void Setup (float h)
     {
         height = h;
+        baseScore = GameManager.instance.currentScore;
     }
 
     public void HitSphere ()

@@ -24,6 +24,12 @@ public class RobotFuerteGM : MonoBehaviour
     public float heightMult = 3;
     public AudioClip hitSound;
     private bool gameStarted = false;
+    public UILabel alturaText;
+    public int intentos = 3;
+    public UILabel intentosLabel;
+    public UILabel debugLabel;
+    public float fuerzaFacil, fuerzaMedio, fuerzaDificil;
+
     void Awake ()
     {
         if (Instance == null)
@@ -43,6 +49,7 @@ public class RobotFuerteGM : MonoBehaviour
     {
         gameStarted = false;
         target = null;
+        alturaText.text = "Altura: 0 metros";
     }
 
     public void Restart ()
@@ -58,11 +65,25 @@ public class RobotFuerteGM : MonoBehaviour
         Init ();
     }
 
+    private void ResetBall(){
+        if (target != null)
+            Destroy (target.gameObject);
+        moveCam.transform.position = baseCam.transform.position;
+        moveCam.Priority = -11;
+        Init();
+    }
+
+    public void NextLevel(){
+        intentos = 3;
+        intentosLabel.text = "Intentos: "+intentos;
+        Restart();
+    }
+
     public void Hit (Rigidbody rb)
     {
         GameManager.instance.PlayAudio (hitSound);
         StopMoving ();
-        fuerza = Mathf.Clamp (fuerza, 0, 4f);
+        fuerza = Mathf.Clamp (fuerza, 0, 10f);
         //Debug.Log(fuerza);
         rb.AddForce (new Vector3 (0, fuerza * ajusteFuerza, 0), ForceMode.Impulse);
         rb.useGravity = true;
@@ -79,7 +100,8 @@ public class RobotFuerteGM : MonoBehaviour
         trackedMovement.Add (lastMousePos);
         int count = trackedMovement.Count;
         yield return new WaitForSeconds (0.1f);
-        while (Vector3.Distance (lastMousePos, trackedMovement[Mathf.Clamp (count - 1, 0, int.MaxValue)]) > 0.1f)
+        int lastPoint = Mathf.Clamp (count - 1, 0, int.MaxValue);
+        while (Vector3.Distance (lastMousePos, trackedMovement[lastPoint]) > 0.1f && lastMousePos.y > trackedMovement[lastPoint].y)
         {
             trackedMovement.Add (lastMousePos);
             count = trackedMovement.Count;
@@ -107,10 +129,17 @@ public class RobotFuerteGM : MonoBehaviour
             target.HitSphere ();
         }
 
+        if(target != null && target.launched){
+            float altura = (Mathf.Clamp(target.transform.position.y - 0.78f,0,float.MaxValue)) / heightMult; 
+            alturaText.text = "Altura: "+Mathf.FloorToInt(altura)+" metros";
+        }
+
         if (!gameStarted && brazo.position.y <= -1.5f)
         {
             StartCoroutine (startBall ());
         }
+
+        debugLabel.text = trackedMovement.Count.ToString();
     }
 
     IEnumerator startBall ()
@@ -124,15 +153,15 @@ public class RobotFuerteGM : MonoBehaviour
         {
             case Dificultad.Nivel.facil:
                 target.Setup (triggerAltura[0].position.y);
-                ajusteFuerza = 5f;
+                ajusteFuerza = fuerzaFacil;
                 break;
             case Dificultad.Nivel.medio:
                 target.Setup (triggerAltura[1].position.y);
-                ajusteFuerza = 6.2f;
+                ajusteFuerza = fuerzaMedio;
                 break;
             case Dificultad.Nivel.dificil:
                 target.Setup (triggerAltura[2].position.y);
-                ajusteFuerza = 7.2f;
+                ajusteFuerza = fuerzaDificil;
                 break;
         }
     }
@@ -151,7 +180,7 @@ public class RobotFuerteGM : MonoBehaviour
             StopCoroutine (movingCoroutine);
         }
         moving = false;
-        fuerza = (trackedMovement[Mathf.Clamp (trackedMovement.Count - 1, 0, int.MaxValue)].y - trackedMovement[0].y) * 2.5f;
+        fuerza = (trackedMovement[Mathf.Clamp (trackedMovement.Count - 1, 0, int.MaxValue)].y - trackedMovement[0].y) * trackedMovement.Count*0.75f;
     }
 
     public void LevelWon ()
@@ -164,6 +193,17 @@ public class RobotFuerteGM : MonoBehaviour
     {
         moveCam.Follow = null;
         GameManager.instance.LevelFailed ();
+    }
+
+    public void BallFall(){
+        intentos--;
+        intentosLabel.text = "Intentos: "+intentos;
+        if(intentos <= 0){
+            LevelFailed();
+        }
+        else{
+            ResetBall();
+        }
     }
 
 }

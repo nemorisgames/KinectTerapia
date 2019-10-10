@@ -7,7 +7,7 @@ public class EscudoBall : MonoBehaviour
     [HideInInspector]
     public float angle = 0;
     [HideInInspector]
-    public float baseSpeed = 15f;
+    public float baseSpeed = 10f;
     public float sweetSpot = 0.4f;
     public float angleAmp = 2;
     Rigidbody rb;
@@ -36,8 +36,8 @@ public class EscudoBall : MonoBehaviour
     {
         if (transform.position.x > limit || transform.position.x < -limit)
         {
-            GameManager.instance.SubstractFromScore(gm.bounces * score);
-            gm.InitBall();
+            //GameManager.instance.SubstractFromScore(gm.bounces * score);
+            gm.InitBall(gm.bounces);
             Destroy(this.gameObject);
         }
     }
@@ -168,7 +168,7 @@ public class EscudoBall : MonoBehaviour
                 break;
             case "StationPlayer":
                 //gm.InitBall();
-                GameManager.instance.LevelFailed();
+                gm.PlayerHit();
                 Destroy(this.gameObject);
                 break;
             case "StationCPU:":

@@ -31,7 +31,11 @@ public class CortaCubosGM : MonoBehaviour
     public int target = 5;
     public int fallos = 0;
     public int puntaje = 100;
-    public UILabel fallosLabel, totalLabel;
+    public UILabel fallosLabel, totalLabel, corteLabel;
+    private float s_xy = 0, s_x = 0, s_y = 0, s_x2 = 0, m = 0;
+    public float margenX, margenY;
+    public Transform volumenMargen;
+    public UILabel debugLabel;
 
     void Awake()
     {
@@ -47,27 +51,32 @@ public class CortaCubosGM : MonoBehaviour
 
     public void Init()
     {
+        //volumenMargen.localScale = new Vector3(margenX,margenY,volumenMargen.localScale.z);
         ClearCubes();
         fallos = 0;
+        s_xy = 0;
+        s_x = 0;
+        s_y = 0;
+        s_x2 = 0;
         switch (dificultad)
         {
             case Dificultad.Nivel.facil:
-                cubeSpeed = 8f;
-                spawnTime = 2.25f;
+                cubeSpeed = 4f;
+                spawnTime = 2.5f;
                 cubes = 15;
                 target = 5;
                 puntaje = 150;
                 break;
             case Dificultad.Nivel.medio:
-                cubeSpeed = 10f;
-                spawnTime = 2f;
+                cubeSpeed = 6f;
+                spawnTime = 2.25f;
                 cubes = 12;
                 target = 4;
                 puntaje = 200;
                 break;
             case Dificultad.Nivel.dificil:
-                cubeSpeed = 12f;
-                spawnTime = 1.75f;
+                cubeSpeed = 8f;
+                spawnTime = 2f;
                 cubes = 10;
                 target = 3;
                 puntaje = 250;
@@ -94,21 +103,46 @@ public class CortaCubosGM : MonoBehaviour
             moveRef.position = new Vector3(hPos, vPos, 0);
         }
 
-        if (Mathf.Abs(moveRef.position.y) <= (height / 2 - 1f) && Mathf.Abs(moveRef.position.x) <= (width / 2 - 1f))
+        /* 
+        Debug.DrawLine(new Vector3(-margenX,margenY -3.15f,0),new Vector3(margenX,margenY -3.15f,0),Color.red);
+        Debug.DrawLine(new Vector3(margenX,margenY -3.15f,0),new Vector3(margenX,-margenY -3.15f,0),Color.red);
+        Debug.DrawLine(new Vector3(margenX,-margenY -3.15f,0),new Vector3(-margenX,-margenY -3.15f,0),Color.red);
+        Debug.DrawLine(new Vector3(-margenX,-margenY -3.15f,0),new Vector3(-margenX,margenY -3.15f,0),Color.red);
+        */
+
+        debugLabel.text = moveRef.position.ToString();
+
+        if (Mathf.Abs(moveRef.position.y) <= (margenY) && Mathf.Abs(moveRef.position.x) <= (margenX))
         {
             points.Add(moveRef.position);
+            s_xy += moveRef.position.x * moveRef.position.y;
+            s_x += moveRef.position.x;
+            s_y += moveRef.position.y;
+            s_x2 += Mathf.Pow(moveRef.position.x,2);
         }
-
         else
         {
             if (!canCut)
                 canCut = true;
             if (points.Count > 1)
             {
-                int last = points.Count - 1;
-                float m = (points[last].y - points[0].y) / (points[last].x - points[0].x);
+                //int last = points.Count - 1;
+                //float m = (points[last].y - points[0].y) / (points[last].x - points[0].x);
+                /* 
+                for(int i = 0; i < points.Count; i++){
+                    s_xy += points[i].x * points[i].y;
+                    s_x += points[i].x;
+                    s_y += points[i].y;
+                    s_x2 += Mathf.Pow(points[i].x,2);
+                }
+                */
+                m = (s_xy - ((s_x*s_y)/points.Count) ) / ( s_x2 - (Mathf.Pow(s_x,2)/points.Count));
                 TipoMovimiento(m);
                 points.Clear();
+                s_xy = 0;
+                s_x = 0;
+                s_y = 0;
+                s_x2 = 0;
             }
         }
 
@@ -118,8 +152,8 @@ public class CortaCubosGM : MonoBehaviour
 
     void TipoMovimiento(float m)
     {
-        if (!cubeInArea)
-            return;
+        //if (!cubeInArea)
+        //    return;
         if (corteActual != null)
             StopCoroutine(corteActual);
         //Debug.Log(m);
@@ -130,7 +164,7 @@ public class CortaCubosGM : MonoBehaviour
             corteActual = SetDireccion(CortaDireccion.Vertical);
             StartCoroutine(corteActual);
         }
-        else if (Mathf.Abs(m) < 0.25f)
+        else if (Mathf.Abs(m) < 0.5f)
         {
             //Debug.Log("Horizontal");
             corteActual = SetDireccion(CortaDireccion.Horizontal);
@@ -169,8 +203,10 @@ public class CortaCubosGM : MonoBehaviour
     IEnumerator SetDireccion(CortaDireccion dir)
     {
         direccion = dir;
+        corteLabel.text = m + " | " +dir.ToString();
         yield return new WaitForSeconds(0.1f);
         direccion = CortaDireccion.None;
+        m = 0;
     }
 
     public void CortarCubo(CortaCubo c)

@@ -22,6 +22,8 @@ public class EscudoGM : MonoBehaviour
     public int currentScore;
     public GameObject[] cpuStation;
     public AudioClip shootSound;
+    public int tries = 3;
+    public UILabel triesLabel;
 
     // Use this for initialization
     void Awake()
@@ -67,21 +69,23 @@ public class EscudoGM : MonoBehaviour
         switch (dificultad)
         {
             case Dificultad.Nivel.facil:
-                bounceTarget = 5;
+                bounceTarget = 3;
                 currentScore = 200;
                 ballBaseSpeed = 200;
                 break;
             case Dificultad.Nivel.medio:
-                bounceTarget = 7;
+                bounceTarget = 4;
                 currentScore = 500;
                 ballBaseSpeed = 250;
                 break;
             case Dificultad.Nivel.dificil:
-                bounceTarget = 10;
+                bounceTarget = 5;
                 currentScore = 800;
                 ballBaseSpeed = 300;
                 break;
         }
+        tries = 3;
+        triesLabel.text = "Intentos: "+tries;
         InitBall();
     }
 
@@ -112,5 +116,16 @@ public class EscudoGM : MonoBehaviour
 				cpuNave.target = null;
 		}*/
         StartCoroutine(cpuNave.startChase());
+    }
+
+    public void PlayerHit(){
+        tries--;
+        triesLabel.text = "Intentos: "+tries;
+        if(tries <= 0){
+            GameManager.instance.LevelFailed();
+        }
+        else{
+            InitBall();
+        }
     }
 }
